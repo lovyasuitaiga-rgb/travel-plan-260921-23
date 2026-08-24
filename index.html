@@ -31,7 +31,7 @@
 
     <div id="app-container" class="w-full min-h-screen sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden">
         
-        <!-- 頂部裝飾標題列 (固定在頂端) -->
+        <!-- 頂部裝飾標題列 -->
         <header id="header-theme" class="sticky top-0 bg-sky-300/80 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500">
             <span id="header-tag" class="text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm">🌸 函館散策手帳</span>
             <button onclick="cycleTheme()" id="theme-btn" class="text-xs font-bold bg-white/95 hover:bg-white px-3 py-1.5 rounded-full text-slate-600 shadow-sm transition-all flex items-center space-x-1 cursor-pointer">
@@ -45,7 +45,7 @@
             <div id="page-content" class="flex flex-col"></div>
         </main>
 
-        <!-- 底部五項功能導航列 (固定在底部) -->
+        <!-- 底部五項功能導航列 -->
         <nav id="nav-theme" class="fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe">
             <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
                 <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl">🚆</div>
@@ -302,35 +302,46 @@
                 content.innerHTML = `
                     <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點口袋名單</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
-                        <input type="text" id="spot-url" placeholder="輸入景點名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="spot-name" placeholder="輸入景點名稱 (例：八幡坂)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="spot-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="addSpot()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增景點口袋</button>
                     </div>
                     <div class="space-y-3">
                         ${spots.map((item, index) => `
-                            <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center space-x-3 border">
-                                <div class="w-10 h-10 ${cSubBg} rounded-xl flex items-center justify-center text-base shrink-0 border">📍</div>
-                                <div class="flex-1 min-w-0"><p class="font-bold text-xs truncate">${item.name}</p></div>
-                                <button onclick="deleteSpot(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-2 py-1">刪除</button>
+                            <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center justify-between border">
+                                <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
+                                    <div class="w-9 h-9 ${cSubBg} rounded-xl flex items-center justify-center text-sm shrink-0 border">📍</div>
+                                    <p class="font-bold text-xs truncate">${item.name}</p>
+                                </div>
+                                <div class="flex items-center space-x-1 shrink-0">
+                                    ${item.url ? `<a href="${item.url}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">地圖</a>` : ''}
+                                    <button onclick="deleteSpot(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
+                                </div>
                             </div>
-                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點吧！</div>`}
+                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點與地圖吧！</div>`}
                     </div>
                 `;
             } else if (currentTab === 'restaurant') {
                 content.innerHTML = `
                     <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 美食口袋名單</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
-                        <input type="text" id="resto-url" placeholder="輸入店家名稱或網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="resto-name" placeholder="輸入店家名稱 (例：幸運小丑漢堡)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="resto-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="addRestaurant()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增美食口袋</button>
                     </div>
                     <div class="space-y-3">
                         ${restaurants.map((item, index) => `
-                            <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex justify-between items-center border">
-                                <div class="min-w-0 flex-1 mr-2"><p class="text-xs font-bold truncate">🍴 ${item.name}</p></div>
+                            <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center justify-between border">
+                                <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
+                                    <div class="w-9 h-9 ${cSubBg} rounded-xl flex items-center justify-center text-sm shrink-0 border">🍴</div>
+                                    <p class="font-bold text-xs truncate">${item.name}</p>
+                                </div>
                                 <div class="flex items-center space-x-1 shrink-0">
+                                    ${item.url ? `<a href="${item.url}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">地圖</a>` : ''}
                                     <button onclick="deleteRestaurant(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
                                 </div>
                             </div>
-                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">🍣 快把想吃的拉麵、壽司加進來吧！</div>`}
+                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">🍣 快把想吃的拉麵、壽司與地圖加進來吧！</div>`}
                     </div>
                 `;
             } else if (currentTab === 'expense') {
@@ -383,18 +394,20 @@
         }
 
         function addRestaurant() {
+            const name = document.getElementById('resto-name').value;
             const url = document.getElementById('resto-url').value;
-            if (!url) return alert('請輸入店家名稱');
-            restaurants.push({ name: url, url });
+            if (!name) return alert('請輸入店家名稱');
+            restaurants.push({ name, url });
             localStorage.setItem('restaurants', JSON.stringify(restaurants));
             render();
         }
         function deleteRestaurant(i) { restaurants.splice(i, 1); localStorage.setItem('restaurants', JSON.stringify(restaurants)); render(); }
 
         function addSpot() {
-            const name = document.getElementById('spot-url').value;
+            const name = document.getElementById('spot-name').value;
+            const url = document.getElementById('spot-url').value;
             if (!name) return alert('請輸入景點名稱');
-            spots.push({ name });
+            spots.push({ name, url });
             localStorage.setItem('spots', JSON.stringify(spots));
             render();
         }
