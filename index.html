@@ -4,107 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我們的旅行小幫手</title>
+    <!-- 引入 Google Fonts 手寫感可愛字體 (Zen Maru Gothic / 圓體) -->
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 套用手寫圓體字型 */
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+        }
+    </style>
+    <script>
+        // 🎨 顏色控制台變數 (你隨時可以在這裡調整色彩)
+        const theme = {
+            bgColor: "bg-sky-200",         // 背景色
+            cardBg: "bg-white/70 backdrop-blur-md border border-white/60 shadow-sm", // 透白卡片
+            primaryBtn: "bg-sky-400 hover:bg-sky-500 text-white font-bold", // 按鈕色
+            textColor: "text-slate-700"    // 文字色
+        };
+    </script>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-12">
-    <div class="max-w-md mx-auto p-4">
-        <header class="mb-6 text-center">
-            <h1 class="text-2xl font-bold text-indigo-600">✈️ 旅行行程與花費</h1>
-        </header>
+<body class="bg-sky-200 text-slate-700 flex justify-center items-center min-h-screen m-0 select-none">
 
-        <!-- 行程區塊 -->
-        <section class="mb-8 bg-white p-4 rounded-xl shadow-sm">
-            <h2 class="text-lg font-semibold mb-3 border-b pb-2">📅 行程記錄</h2>
-            <div id="itinerary-list" class="space-y-2 mb-4">
-                <!-- 動態插入行程 -->
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="itinerary-time" placeholder="時間 (例如: 10:00)" class="w-full p-2 border rounded-lg text-sm">
-                <input type="text" id="itinerary-desc" placeholder="行程內容 (例如: 淺草寺參拜)" class="w-full p-2 border rounded-lg text-sm">
-                <button onclick="addItinerary()" class="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium text-sm">新增行程</button>
-            </div>
-        </section>
+    <!-- 手機外框容器 (固定手機比例 RWD) -->
+    <div id="app-container" class="w-full max-w-md h-[850px] bg-sky-200 flex flex-col justify-between relative shadow-2xl overflow-hidden rounded-3xl border-4 border-white/80">
+        
+        <!-- 頂部色彩設定快速區 (可收合或直接調整) -->
+        <div class="absolute top-2 right-2 z-50 text-[10px] bg-white/50 p-1 rounded backdrop-blur">
+            <span class="cursor-pointer" onclick="alert('可以直接修改程式碼頂部的 theme 物件來調整顏色！')">🎨 色彩設定中</span>
+        </div>
 
-        <!-- 花費區塊 -->
-        <section class="bg-white p-4 rounded-xl shadow-sm">
-            <h2 class="text-lg font-semibold mb-3 border-b pb-2">💰 花費記錄</h2>
-            <div class="flex justify-between font-bold text-sm mb-3 text-gray-600">
-                <span>總支出：<span id="total-cost" class="text-indigo-600">0</span> JPY</span>
+        <!-- 內容主畫面區域 (根據當前分頁切換) -->
+        <main class="flex-1 overflow-y-auto p-4 pb-24 flex flex-col">
+            <div id="page-content" class="flex-1 flex flex-col">
+                <!-- 動態載入頁面內容 -->
             </div>
-            <div id="expense-list" class="space-y-2 mb-4 text-sm">
-                <!-- 動態插入花費 -->
+        </main>
+
+        <!-- 底部五項功能導航列 -->
+        <nav class="absolute bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t border-white/50 flex justify-around items-center px-2 z-40 shadow-lg">
+            <!-- 1. 行程 -->
+            <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group">
+                <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">🚆</div>
+                <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
             </div>
-            <div class="space-y-2">
-                <input type="text" id="expense-item" placeholder="項目 (例如: 午餐拉麵)" class="w-full p-2 border rounded-lg text-sm">
-                <input type="number" id="expense-amount" placeholder="金額 (JPY)" class="w-full p-2 border rounded-lg text-sm">
-                <button onclick="addExpense()" class="w-full bg-emerald-600 text-white py-2 rounded-lg font-medium text-sm">新增花費</button>
+            <!-- 2. 景點 -->
+            <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center cursor-pointer relative group">
+                <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">⭐</div>
+                <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
             </div>
-        </section>
+            <!-- 3. 交通/飯店 -->
+            <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group">
+                <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">📚</div>
+                <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
+            </div>
+            <!-- 4. 餐廳 -->
+            <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center cursor-pointer relative group">
+                <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">🍽️</div>
+                <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
+            </div>
+            <!-- 5. 記帳 -->
+            <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center cursor-pointer relative group">
+                <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">💵</div>
+                <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
+            </div>
+        </nav>
     </div>
 
     <script>
-        // 簡單的 LocalStorage 示範（若要雙人同步可改接 Firebase）
-        let itineraries = JSON.parse(localStorage.getItem('itineraries')) || [];
+        // 目前所在分頁
+        let currentTab = 'itinerary';
+
+        // 資料狀態 (LocalStorage 暫存)
+        let restaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
+        let spots = JSON.parse(localStorage.getItem('spots')) || [];
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
-        function render() {
-            // 渲染行程
-            const itiList = document.getElementById('itinerary-list');
-            itiList.innerHTML = itineraries.map((item, index) => `
-                <div class="flex justify-between items-center bg-gray-50 p-2 rounded text-sm">
-                    <span><strong>[${item.time}]</strong> ${item.desc}</span>
-                    <button onclick="deleteItinerary(${index})" class="text-red-500 text-xs">刪除</button>
-                </div>
-            `).join('') || '<p class="text-gray-400 text-xs text-center">尚無行程</p>';
+        // 切換分頁主邏輯
+        function switchTab(tab) {
+            currentTab = tab;
+            render();
+        }
 
-            // 渲染花費
-            const expList = document.getElementById('expense-list');
-            let total = 0;
-            expList.innerHTML = expenses.map((item, index) => {
-                total += Number(item.amount);
-                return `
-                    <div class="flex justify-between items-center bg-gray-50 p-2 rounded">
-                        <span>${item.name}</span>
-                        <span class="text-gray-600">¥${item.amount} <button onclick="deleteExpense(${index})" class="text-red-500 text-xs ml-2">刪除</button></span>
+        // 畫面渲染總控
+        function render() {
+            const content = document.getElementById('page-content');
+            
+            // 更新底部導航列的選取狀態與藍色圓形指示燈
+            const tabs = ['itinerary', 'spots', 'traffic', 'restaurant', 'expense'];
+            tabs.forEach((t, idx) => {
+                const navItem = document.querySelectorAll('.nav-item')[idx];
+                const indicator = navItem.querySelector('.indicator');
+                const iconBg = navItem.querySelector('.icon-bg');
+                
+                if (t === currentTab) {
+                    indicator.style.opacity = '1';
+                    iconBg.classList.add('bg-sky-300/40', 'rounded-full');
+                } else {
+                    indicator.style.opacity = '0';
+                    iconBg.classList.remove('bg-sky-300/40', 'rounded-full');
+                }
+            });
+
+            // 根據分頁渲染不同內容
+            if (currentTab === 'itinerary') {
+                content.innerHTML = `
+                    <h2 class="text-xl font-bold mb-3 text-center">📅 行程首頁</h2>
+                    <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm flex-1 flex flex-col justify-center items-center border border-white/60">
+                        <p class="text-slate-400">這裡放細部行程（我們等等再來雕刻！）</p>
                     </div>
                 `;
-            }).join('') || '<p class="text-gray-400 text-xs text-center">尚無花費</p>';
+            } else if (currentTab === 'spots') {
+                content.innerHTML = `
+                    <h2 class="text-xl font-bold mb-3 text-center">⭐ 景點口袋名單</h2>
+                    <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border border-white/60 space-y-2">
+                        <input type="text" id="spot-url" placeholder="輸入 Google Map 連結或景點名稱" class="w-full p-2 border rounded-xl text-sm bg-white/80 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                        <button onclick="addSpot()" class="w-full bg-sky-400 hover:bg-sky-500 text-white py-2 rounded-xl text-sm font-bold shadow">新增景點</button>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto flex-1">
+                        ${spots.map((item, index) => `
+                            <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center space-x-3 border border-white/60">
+                                <div class="w-16 h-16 bg-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-500 shrink-0">📍 縮圖</div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-sm truncate">${item.name}</p>
+                                    <p class="text-xs text-slate-400 mt-1">簡易交通資訊：搭乘地鐵至某站步行 5 分鐘</p>
+                                </div>
+                                <button onclick="deleteSpot(${index})" class="text-red-400 text-xs">刪除</button>
+                            </div>
+                        `).join('') || '<p class="text-center text-slate-400 text-xs mt-8">尚無景點，快來新增吧！</p>'}
+                    </div>
+                `;
+            } else if (currentTab === 'traffic') {
+                content.innerHTML = `
+                    <h2 class="text-xl font-bold mb-3 text-center">📚 交通與飯店資訊</h2>
+                    <div class="space-y-3 overflow-y-auto flex-1">
+                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🏨 飯店資訊</div>
+                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🚄 去程新幹線</div>
+                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🚇 當地地鐵時刻表</div>
+                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🚄 回程新幹線</div>
+                    </div>
+                `;
+            } else if (currentTab === 'restaurant') {
+                content.innerHTML = `
+                    <h2 class="text-xl font-bold mb-3 text-center">🍽️ 餐廳口袋名單</h2>
+                    <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border border-white/60 space-y-2">
+                        <input type="text" id="resto-url" placeholder="google map url" class="w-full p-2 border rounded-xl text-sm bg-white/80 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                        <button onclick="addRestaurant()" class="w-full bg-sky-400 hover:bg-sky-500 text-white py-2 rounded-xl text-sm font-bold shadow">追加</button>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto flex-1">
+                        ${restaurants.map((item, index) => `
+                            <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm flex justify-between items-center border border-white/60">
+                                <span class="text-sm font-bold truncate">店家：${item.name}</span>
+                                <div class="space-x-2">
+                                    <a href="${item.url}" target="_blank" class="text-xs bg-emerald-500 text-white px-2 py-1 rounded-lg">地圖</a>
+                                    <button onclick="deleteRestaurant(${index})" class="text-red-400 text-xs">刪除</button>
+                                </div>
+                            </div>
+                        `).join('') || '<p class="text-center text-slate-400 text-xs mt-8">尚無餐廳紀錄</p>'}
+                    </div>
+                `;
+            } else if (currentTab === 'expense') {
+                // 記帳與雙人分帳邏輯計算
+                let mayTotal = 0;
+                let pingTotal = 0;
 
-            document.getElementById('total-cost').innerText = total;
-            localStorage.setItem('itineraries', JSON.stringify(itineraries));
-            localStorage.setItem('expenses', JSON.stringify(expenses));
+                expenses.forEach(e => {
+                    if (e.payer === 'May') mayTotal += Number(e.amount);
+                    if (e.payer === '萍') pingTotal += Number(e.amount);
+                });
+
+                // 兩人各自總花費（因為皆以兩人份為前提，總花費平分）
+                const totalExpense = mayTotal + pingTotal;
+                const eachShouldPay = totalExpense / 2;
+
+                // 誰該給誰多少錢（一人份差額計算）
+                // 舉例：May 總共代墊了多少，扣掉她自己該付的，就是別人要給她的
+                let settlementText = "兩人生日打平，無需互補";
+                let diff = Math.abs(mayTotal - pingTotal) / 2;
+                if (mayTotal > pingTotal) {
+                    settlementText = `萍 要給 May ￥${diff} (一人份差額)`;
+                } else if (pingTotal > mayTotal) {
+                    settlementText = `May 要給 萍 ￥${diff} (一人份差額)`;
+                }
+
+                content.innerHTML = `
+                    <h2 class="text-xl font-bold mb-3 text-center">💵 雙人記帳本</h2>
+                    <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border border-white/60 space-y-2">
+                        <div class="flex space-x-2">
+                            <select id="exp-payer" class="p-2 border rounded-xl text-sm bg-white/80 focus:outline-none">
+                                <option value="May">May 墊</option>
+                                <option value="萍">萍 墊</option>
+                            </select>
+                            <input type="text" id="exp-name" placeholder="品項/店名" class="flex-1 p-2 border rounded-xl text-sm bg-white/80 focus:outline-none">
+                        </div>
+                        <input type="number" id="exp-amount" placeholder="費用 (JPY)" class="w-full p-2 border rounded-xl text-sm bg-white/80 focus:outline-none">
+                        <button onclick="addExpense()" class="w-full bg-sky-400 hover:bg-sky-500 text-white py-2 rounded-xl text-sm font-bold shadow">追加記帳</button>
+                    </div>
+
+                    <!-- May 墊的費用清單 -->
+                    <div class="mb-3">
+                        <h3 class="text-xs font-bold text-sky-600 mb-1">May 墊的費用 (總計: ￥${mayTotal})</h3>
+                        <div class="bg-white/70 backdrop-blur-md p-2 rounded-xl text-xs space-y-1 border border-white/60">
+                            ${expenses.filter(e => e.payer === 'May').map((e, idx) => `
+                                <div class="flex justify-between"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1">x</button></span></div>
+                            `).join('') || '<span class="text-slate-400">無紀錄</span>'}
+                        </div>
+                    </div>
+
+                    <!-- 萍 墊的費用清單 -->
+                    <div class="mb-3">
+                        <h3 class="text-xs font-bold text-sky-600 mb-1">萍 墊的費用 (總計: ￥${pingTotal})</h3>
+                        <div class="bg-white/70 backdrop-blur-md p-2 rounded-xl text-xs space-y-1 border border-white/60">
+                            ${expenses.filter(e => e.payer === '萍').map((e, idx) => `
+                                <div class="flex justify-between"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1">x</button></span></div>
+                            `).join('') || '<span class="text-slate-400">無紀錄</span>'}
+                        </div>
+                    </div>
+
+                    <!-- 結算提示框 -->
+                    <div class="bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-sm text-center font-bold text-sky-600 border border-white/60 text-sm mt-auto">
+                        ${settlementText}
+                    </div>
+                `;
+            }
         }
 
-        function addItinerary() {
-            const time = document.getElementById('itinerary-time').value;
-            const desc = document.getElementById('itinerary-desc').value;
-            if(!time || !desc) return alert('請填寫完整');
-            itineraries.push({ time, desc });
-            document.getElementById('itinerary-time').value = '';
-            document.getElementById('itinerary-desc').value = '';
+        // 資料操作函式
+        function addRestaurant() {
+            const url = document.getElementById('resto-url').value;
+            if (!url) return alert('請輸入網址');
+            restaurants.push({ name: url.split('/').pop() || 'Google Map 店家', url });
+            document.getElementById('resto-url').value = '';
+            localStorage.setItem('restaurants', JSON.stringify(restaurants));
             render();
         }
+        function deleteRestaurant(i) { restaurants.splice(i, 1); localStorage.setItem('restaurants', JSON.stringify(restaurants)); render(); }
+
+        function addSpot() {
+            const name = document.getElementById('spot-url').value;
+            if (!name) return alert('請輸入內容');
+            spots.push({ name });
+            document.getElementById('spot-url').value = '';
+            localStorage.setItem('spots', JSON.stringify(spots));
+            render();
+        }
+        function deleteSpot(i) { spots.splice(i, 1); localStorage.setItem('spots', JSON.stringify(spots)); render(); }
 
         function addExpense() {
-            const name = document.getElementById('expense-item').value;
-            const amount = document.getElementById('expense-amount').value;
-            if(!name || !amount) return alert('請填寫完整');
-            expenses.push({ name, amount });
-            document.getElementById('expense-item').value = '';
-            document.getElementById('expense-amount').value = '';
+            const payer = document.getElementById('exp-payer').value;
+            const name = document.getElementById('exp-name').value;
+            const amount = document.getElementById('exp-amount').value;
+            if (!name || !amount) return alert('請填寫完整');
+            expenses.push({ payer, name, amount: Number(amount) });
+            localStorage.setItem('expenses', JSON.stringify(expenses));
             render();
         }
+        function deleteExpense(i) { expenses.splice(i, 1); localStorage.setItem('expenses', JSON.stringify(expenses)); render(); }
 
-        function deleteItinerary(index) {
-            itineraries.splice(index, 1);
-            render();
-        }
-
-        function deleteExpense(index) {
-            expenses.splice(index, 1);
-            render();
-        }
-
+        // 初始化第一次渲染
         render();
     </script>
 </body>
