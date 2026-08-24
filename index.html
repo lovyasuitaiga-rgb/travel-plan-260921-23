@@ -11,15 +11,19 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            min-height: 100%;
+            height: 100%;
+            overflow: hidden; /* 鎖死外層，由內層容器滾動，避免 iOS 亂飄 */
             font-family: 'Zen Maru Gothic', sans-serif;
             background-color: #e0f2fe;
             user-select: none;
             -webkit-user-select: none;
-            -webkit-overflow-scrolling: touch;
         }
-        .pb-safe-nav {
-            padding-bottom: max(env(safe-area-inset-bottom, 16px), 12px);
+        /* 內部滾動區塊，預留底部導航列的高度與安全距離 */
+        .scroll-area {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+            padding-bottom: 90px; 
         }
         ::-webkit-scrollbar {
             width: 4px;
@@ -30,13 +34,13 @@
         }
     </style>
 </head>
-<body id="body-theme" class="bg-sky-100 text-slate-700 flex flex-col items-center transition-colors duration-500">
+<body id="body-theme" class="bg-sky-100 text-slate-700 flex flex-col items-center justify-center transition-colors duration-500">
 
-    <!-- 主容器：確保在手機上完美貼合，底部自然延伸 -->
-    <div id="app-container" class="w-full min-h-[100dvh] sm:max-w-md sm:my-4 sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500">
+    <!-- 主容器：手機全螢幕完美貼合 -->
+    <div id="app-container" class="w-full h-full sm:max-w-md sm:h-[92vh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl overflow-hidden transition-colors duration-500">
         
         <!-- 頂部標題列 -->
-        <header id="header-theme" class="sticky top-0 bg-sky-300/85 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500">
+        <header id="header-theme" class="bg-sky-300/85 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-30 shrink-0 transition-colors duration-500">
             <span id="header-tag" class="text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm">🌸 函館散策手帳</span>
             <button onclick="cycleTheme()" id="theme-btn" class="text-xs font-bold bg-white/95 hover:bg-white px-3 py-1.5 rounded-full text-slate-600 shadow-sm transition-all flex items-center space-x-1 cursor-pointer">
                 <span id="theme-icon">☁️</span>
@@ -44,37 +48,32 @@
             </button>
         </header>
 
-        <!-- 內容主畫面區域：加上足夠的底部間距，絕對不會被導航列遮住或重疊 -->
-        <main class="flex-1 p-4 pb-28 flex flex-col z-10">
+        <!-- 內容主畫面區域（可滾動） -->
+        <div class="scroll-area p-4 flex flex-col">
             <div id="page-content" class="flex flex-col"></div>
-        </main>
+        </div>
 
-        <!-- 底部五項功能導航列：改用固定黏貼底部，完美避開 Safari 浮動工具列 -->
-        <nav id="nav-theme" class="sticky bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500 pb-safe-nav">
-            <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
+        <!-- 底部五項功能導航列：絕對固定在底部，絕不跑位 -->
+        <nav id="nav-theme" class="absolute bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+            <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
                 <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">🚆</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">交通飯店</span>
-                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
-            <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
+            <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
                 <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">⭐</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">景點</span>
-                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
-            <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl shadow-sm">📖</div>
-                <span class="nav-label text-[10px] font-bold mt-0.5">行程</span>
-                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
+            <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
+                <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">📖</div>
+                <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">行程</span>
             </div>
-            <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
+            <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
                 <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">🍣</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">美食</span>
-                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
-            <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
+            <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
                 <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">💰</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">記帳</span>
-                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
         </nav>
     </div>
@@ -111,33 +110,34 @@
             const themeText = document.getElementById('theme-text');
 
             if (currentTheme === 'sky') {
-                body.className = "bg-sky-100 text-slate-700 flex flex-col items-center transition-colors duration-500";
-                container.className = "w-full min-h-[100dvh] sm:max-w-md sm:my-4 sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500";
-                header.className = "sticky top-0 bg-sky-300/85 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
+                body.className = "bg-sky-100 text-slate-700 flex flex-col items-center justify-center transition-colors duration-500";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92vh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl overflow-hidden transition-colors duration-500";
+                header.className = "bg-sky-300/85 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-30 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm";
                 headerTag.innerText = "🌸 函館散策手帳";
-                nav.className = "sticky bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500 pb-safe-nav";
+                nav.className = "absolute bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500";
                 themeIcon.innerText = "☁️"; themeText.innerText = "青空風格";
             } else if (currentTheme === 'paper') {
-                body.className = "bg-amber-100/70 text-amber-950 flex flex-col items-center transition-colors duration-500";
-                container.className = "w-full min-h-[100dvh] sm:max-w-md sm:my-4 sm:rounded-3xl sm:border-4 sm:border-amber-200 bg-[#fbfbde] flex flex-col relative shadow-2xl transition-colors duration-500";
-                header.className = "sticky top-0 bg-amber-200/90 backdrop-blur-md px-4 py-3 text-center border-b border-amber-300/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
+                body.className = "bg-amber-100/70 text-amber-950 flex flex-col items-center justify-center transition-colors duration-500";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92vh] sm:rounded-3xl sm:border-4 sm:border-amber-200 bg-[#fbfbde] flex flex-col relative shadow-2xl overflow-hidden transition-colors duration-500";
+                header.className = "bg-amber-200/90 backdrop-blur-md px-4 py-3 text-center border-b border-amber-300/60 flex items-center justify-between z-30 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-amber-100 px-2.5 py-1 rounded-full text-amber-800 shadow-sm";
                 headerTag.innerText = "📜 復古筆記手帳";
-                nav.className = "sticky bottom-0 left-0 right-0 h-16 bg-[#fefce8]/95 backdrop-blur-md border-t border-amber-200 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500 pb-safe-nav";
+                nav.className = "absolute bottom-0 left-0 right-0 h-16 bg-[#fefce8]/95 backdrop-blur-md border-t border-amber-200 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500";
                 themeIcon.innerText = "📜"; themeText.innerText = "紙質筆記";
             } else if (currentTheme === 'night') {
-                body.className = "bg-slate-950 text-slate-100 flex flex-col items-center transition-colors duration-500";
-                container.className = "w-full min-h-[100dvh] sm:max-w-md sm:my-4 sm:rounded-3xl sm:border-4 sm:border-slate-700 bg-slate-900 flex flex-col relative shadow-2xl transition-colors duration-500";
-                header.className = "sticky top-0 bg-indigo-950/90 backdrop-blur-md px-4 py-3 text-center border-b border-indigo-900/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
+                body.className = "bg-slate-950 text-slate-100 flex flex-col items-center justify-center transition-colors duration-500";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92vh] sm:rounded-3xl sm:border-4 sm:border-slate-700 bg-slate-900 flex flex-col relative shadow-2xl overflow-hidden transition-colors duration-500";
+                header.className = "bg-indigo-950/90 backdrop-blur-md px-4 py-3 text-center border-b border-indigo-900/60 flex items-center justify-between z-30 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-indigo-900/80 px-2.5 py-1 rounded-full text-indigo-200 shadow-sm";
                 headerTag.innerText = "🌌 函館山百萬夜景";
-                nav.className = "sticky bottom-0 left-0 right-0 h-16 bg-slate-900/95 backdrop-blur-md border-t border-indigo-900 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500 pb-safe-nav";
+                nav.className = "absolute bottom-0 left-0 right-0 h-16 bg-slate-900/95 backdrop-blur-md border-t border-indigo-900 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500";
                 themeIcon.innerText = "🌌"; themeText.innerText = "夜景觀星";
             }
+            nav.style.paddingBottom = "env(safe-area-inset-bottom, 0px)";
         }
 
-        function switchTab(tab) { currentTab = tab; render(); window.scrollTo(0, 0); }
+        function switchTab(tab) { currentTab = tab; render(); }
         function switchDay(day) { currentDay = day; render(); }
         function saveRoom(val) { hotelRoom = val; localStorage.setItem('hotelRoom', val); }
 
@@ -149,27 +149,20 @@
             let cSubBg = currentTheme === 'night' ? 'bg-slate-900/80 border-slate-700 text-slate-200' : (currentTheme === 'paper' ? 'bg-amber-100/60 border-amber-200 text-amber-900' : 'bg-sky-50/70 border-sky-100 text-slate-600');
             let cPrimaryBtn = currentTheme === 'night' ? 'bg-indigo-600 hover:bg-indigo-500 text-white' : (currentTheme === 'paper' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-sky-400 hover:bg-sky-500 text-white');
             let cTextAccent = currentTheme === 'night' ? 'text-indigo-300' : (currentTheme === 'paper' ? 'text-amber-800' : 'text-sky-700');
-            let cIndicatorColor = currentTheme === 'night' ? 'bg-indigo-400' : (currentTheme === 'paper' ? 'bg-amber-600' : 'bg-sky-400');
-            let activeNavBg = currentTheme === 'night' ? 'bg-indigo-900/80 shadow-sm' : (currentTheme === 'paper' ? 'bg-amber-200/80 shadow-sm' : 'bg-sky-200/90 shadow-sm');
+            let activeNavBg = currentTheme === 'night' ? 'bg-indigo-900/80 text-indigo-200' : (currentTheme === 'paper' ? 'bg-amber-200/90 text-amber-900' : 'bg-sky-200/90 text-sky-900');
 
             const tabs = ['traffic', 'spots', 'itinerary', 'restaurant', 'expense'];
             tabs.forEach((t, idx) => {
                 const navItem = document.querySelectorAll('.nav-item')[idx];
-                const indicator = navItem.querySelector('.indicator');
                 const iconBg = navItem.querySelector('.icon-bg');
                 const navLabel = navItem.querySelector('.nav-label');
                 
-                indicator.className = `indicator w-1.5 h-1.5 rounded-full ${cIndicatorColor} transition-all`;
                 navLabel.className = `nav-label text-[10px] font-bold mt-0.5 ${currentTheme === 'night' ? 'text-slate-400' : (currentTheme === 'paper' ? 'text-amber-900/70' : 'text-slate-500')}`;
 
                 if (t === currentTab) {
-                    indicator.style.opacity = '1';
-                    iconBg.className = `icon-bg w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-base sm:text-lg transition-all rounded-2xl ${activeNavBg}`;
-                    if(t === 'itinerary') iconBg.className = `icon-bg w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-lg sm:text-xl transition-all rounded-2xl ${activeNavBg}`;
+                    iconBg.className = `icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl ${activeNavBg} shadow-sm scale-105`;
                 } else {
-                    indicator.style.opacity = '0';
-                    iconBg.className = `icon-bg w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-base sm:text-lg transition-all rounded-2xl`;
-                    if(t === 'itinerary') iconBg.className = `icon-bg w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-lg sm:text-xl transition-all rounded-2xl ${currentTheme==='night'?'bg-slate-800/55':(currentTheme==='paper'?'bg-amber-100/50':'bg-sky-200/50')}`;
+                    iconBg.className = `icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl ${currentTheme==='night'?'bg-slate-800/55 text-slate-300':(currentTheme==='paper'?'bg-amber-100/50 text-amber-900':'bg-sky-200/50 text-slate-700')}`;
                 }
             });
 
@@ -191,7 +184,7 @@
                         ${currentDay === 1 ? `
                             <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b">
                                 <span class="${cSubBg} p-1.5 rounded-xl border">🚄</span>
-                                <span>Day 1：抵達函館 ＆ 五稜郭與百萬夜景</span>
+                               <span>Day 1：抵達函館 ＆ 五稜郭與百萬夜景</span>
                             </div>
                             <div class="space-y-3 pl-1">
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
