@@ -76,22 +76,22 @@
                 <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
             <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
-                <span class="text-base">⭐</span>
+                <span class="text-base">🗺️</span>
                 <span class="nav-label text-[10px] font-bold mt-0.5">景點</span>
                 <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
             <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
-                <span class="text-base">📖</span>
+                <span class="text-base">📚</span>
                 <span class="nav-label text-[10px] font-bold mt-0.5">行程</span>
                 <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
             <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
-                <span class="text-base">🍣</span>
+                <span class="text-base">🍽️</span>
                 <span class="nav-label text-[10px] font-bold mt-0.5">美食</span>
                 <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
             <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
-                <span class="text-base">💰</span>
+                <span class="text-base">💸</span>
                 <span class="nav-label text-[10px] font-bold mt-0.5">記帳</span>
                 <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
@@ -298,7 +298,7 @@
                             </div>
                             <div class="space-y-3 pl-1">
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
-                                    <p class="font-bold ${cTextAccent}">⏰ 09:00 – 11:30 ｜ 特拉皮斯汀女子修道院</p>
+                                    <p class="font-bold ${cTextAccent}">⏰ 09:00 – 11:30 ｜ 天使の聖母トラピスチヌ修道院</p>
                                     <p class="mt-1">➔ 寄放行李後搭公車前往修道院，欣賞歐風庭園建築，必吃「市民の森」超濃霜淇淋！</p>
                                 </div>
                                 <div class="flex justify-center opacity-70">⬇️ 返回 JR 函館站</div>
@@ -368,11 +368,11 @@
                 `;
             } else if (currentTab === 'spots') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 雲端同步景點清單</h2>
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點清單</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
-                        <input type="text" id="spot-name" placeholder="輸入景點名稱 (例：八幡坂)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="spot-name" placeholder="輸入景點名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <input type="text" id="spot-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <button onclick="handleSpotAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增景點至雲端</button>
+                        <button onclick="handleSpotAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至景點口袋</button>
                     </div>
                     <div class="space-y-3">
                         ${spots.map((item) => `
@@ -391,11 +391,11 @@
                 `;
             } else if (currentTab === 'restaurant') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 雲端同步美食清單</h2>
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 美食清單</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
-                        <input type="text" id="resto-name" placeholder="輸入店家名稱 (例：幸運小丑漢堡)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="resto-name" placeholder="輸入店家名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <input type="text" id="resto-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <button onclick="handleRestoAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增美食至雲端</button>
+                        <button onclick="handleRestoAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至美食口袋</button>
                     </div>
                     <div class="space-y-3">
                         ${restaurants.map((item) => `
