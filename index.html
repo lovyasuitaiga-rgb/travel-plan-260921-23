@@ -3,34 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我們的旅行小幫手</title>
+    <title>我們的函館旅行小幫手</title>
     <!-- 引入 Google Fonts 手寫感可愛字體 (Zen Maru Gothic / 圓體) -->
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 套用手寫圓體字型 */
         body {
             font-family: 'Zen Maru Gothic', sans-serif;
         }
     </style>
-    <script>
-        // 🎨 顏色控制台變數 (你隨時可以在這裡調整色彩)
-        const theme = {
-            bgColor: "bg-sky-200",         // 背景色
-            cardBg: "bg-white/70 backdrop-blur-md border border-white/60 shadow-sm", // 透白卡片
-            primaryBtn: "bg-sky-400 hover:bg-sky-500 text-white font-bold", // 按鈕色
-            textColor: "text-slate-700"    // 文字色
-        };
-    </script>
 </head>
 <body class="bg-sky-200 text-slate-700 flex justify-center items-center min-h-screen m-0 select-none">
 
     <!-- 手機外框容器 (固定手機比例 RWD) -->
     <div id="app-container" class="w-full max-w-md h-[850px] bg-sky-200 flex flex-col justify-between relative shadow-2xl overflow-hidden rounded-3xl border-4 border-white/80">
         
-        <!-- 頂部色彩設定快速區 (可收合或直接調整) -->
+        <!-- 頂部色彩設定快速提示 -->
         <div class="absolute top-2 right-2 z-50 text-[10px] bg-white/50 p-1 rounded backdrop-blur">
-            <span class="cursor-pointer" onclick="alert('可以直接修改程式碼頂部的 theme 物件來調整顏色！')">🎨 色彩設定中</span>
+            <span class="cursor-pointer" onclick="alert('可以直接修改程式碼中的 class 來調整外觀！')">🎨 手寫風主題</span>
         </div>
 
         <!-- 內容主畫面區域 (根據當前分頁切換) -->
@@ -40,9 +30,9 @@
             </div>
         </main>
 
-        <!-- 底部五項功能導航列 -->
+        <!-- 底部五項功能導航列 (行程 / 景點 / 交通 / 餐廳 / 記帳) -->
         <nav class="absolute bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t border-white/50 flex justify-around items-center px-2 z-40 shadow-lg">
-            <!-- 1. 行程 -->
+            <!-- 1. 行程 (首頁) -->
             <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group">
                 <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">🚆</div>
                 <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
@@ -52,7 +42,7 @@
                 <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">⭐</div>
                 <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
             </div>
-            <!-- 3. 交通/飯店 -->
+            <!-- 3. 交通與飯店 (已與行程交換位置) -->
             <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group">
                 <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all">📚</div>
                 <div class="indicator w-2 h-2 rounded-full bg-sky-400 mt-1 opacity-0 transition-all"></div>
@@ -71,25 +61,36 @@
     </div>
 
     <script>
-        // 目前所在分頁
+        // 目前所在分頁 (預設為行程)
         let currentTab = 'itinerary';
+        let currentDay = 1; // 行程預設 Day 1
 
         // 資料狀態 (LocalStorage 暫存)
         let restaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
         let spots = JSON.parse(localStorage.getItem('spots')) || [];
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        let hotelRoom = localStorage.getItem('hotelRoom') || '';
 
-        // 切換分頁主邏輯
         function switchTab(tab) {
             currentTab = tab;
             render();
+        }
+
+        function switchDay(day) {
+            currentDay = day;
+            render();
+        }
+
+        function saveRoom(val) {
+            hotelRoom = val;
+            localStorage.setItem('hotelRoom', val);
         }
 
         // 畫面渲染總控
         function render() {
             const content = document.getElementById('page-content');
             
-            // 更新底部導航列的選取狀態與藍色圓形指示燈
+            // 更新底部導航列與藍色圓點指示燈
             const tabs = ['itinerary', 'spots', 'traffic', 'restaurant', 'expense'];
             tabs.forEach((t, idx) => {
                 const navItem = document.querySelectorAll('.nav-item')[idx];
@@ -105,15 +106,54 @@
                 }
             });
 
-            // 根據分頁渲染不同內容
+            // 1. 行程頁面 (首頁)
             if (currentTab === 'itinerary') {
                 content.innerHTML = `
-                    <h2 class="text-xl font-bold mb-3 text-center">📅 行程首頁</h2>
-                    <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm flex-1 flex flex-col justify-center items-center border border-white/60">
-                        <p class="text-slate-400">這裡放細部行程（我們等等再來雕刻！）</p>
+                    <h2 class="text-xl font-bold mb-3 text-center">📅 函館三日旅行程</h2>
+                    <!-- Day 切換按鈕 -->
+                    <div class="flex justify-center space-x-2 mb-4">
+                        <button onclick="switchDay(1)" class="px-4 py-1.5 rounded-full text-xs font-bold ${currentDay === 1 ? 'bg-sky-500 text-white shadow' : 'bg-white/70 text-slate-600'}">Day 1</button>
+                        <button onclick="switchDay(2)" class="px-4 py-1.5 rounded-full text-xs font-bold ${currentDay === 2 ? 'bg-sky-500 text-white shadow' : 'bg-white/70 text-slate-600'}">Day 2</button>
+                        <button onclick="switchDay(3)" class="px-4 py-1.5 rounded-full text-xs font-bold ${currentDay === 3 ? 'bg-sky-500 text-white shadow' : 'bg-white/70 text-slate-600'}">Day 3</button>
+                    </div>
+
+                    <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm flex-1 overflow-y-auto border border-white/60 space-y-3 text-xs leading-relaxed">
+                        ${currentDay === 1 ? `
+                            <div class="font-bold text-sm text-sky-600 pb-1 border-b border-sky-100">Day 1：抵達函館 ＆ 五稜郭周邊與函館山夜景</div>
+                            <div class="space-y-2">
+                                <p><strong>08:00–12:30｜新幹線移動</strong><br>• 東京搭 Hayabusa 5号 至新函館北斗，轉乘 JR Hakodate Liner 至五稜郭或函館。</p>
+                                <p><strong>13:00–13:30｜飯店寄放行李</strong><br>• 抵達 ホテルマイステイズ函館五稜郭 寄放行李。</p>
+                                <p><strong>13:30–16:30｜五稜郭公園與五稜郭塔</strong><br>• 午餐：幸運小丑漢堡（五稜郭公園前店）或味彩本店鹽味拉麵。<br>• 景點：登五稜郭塔俯瞰星形城郭、散步奉行所。</p>
+                                <p><strong>17:00–19:30｜世界級夜景：函館山</strong><br>• 搭市電至十字街站，轉乘纜車上山賞百萬夜景（建議日落前 30-45 分鐘卡位）。</p>
+                                <p><strong>20:00–｜晚餐與返回飯店</strong><br>• 返回五稜郭本町周邊享用居酒屋或成吉思汗烤肉，回飯店泡湯休息。</p>
+                            </div>
+                        ` : ''}
+
+                        ${currentDay === 2 ? `
+                            <div class="font-bold text-sm text-sky-600 pb-1 border-b border-sky-100">Day 2：港町風情、古蹟散策與沿海體驗</div>
+                            <div class="space-y-2">
+                                <p><strong>08:00–10:00｜函館朝市體驗</strong><br>• 搭市電至函館站前，品嚐海鮮丼、體驗釣活烏賊、烤帝王蟹腳。</p>
+                                <p><strong>10:30–13:00｜元町異國風情街區散策</strong><br>• 走訪八幡坂、舊函館區公會堂、東正教堂、天主堂。</p>
+                                <p><strong>13:00–15:30｜金森紅磚倉庫商圈</strong><br>• 倉庫區 Snaffle’s 品嚐現做乳酪蛋糕、挑選伴手禮。</p>
+                                <p><strong>16:00–18:00｜湯之川溫泉區</strong><br>• 搭市電至湯之川，看猴子泡溫泉或足湯放鬆。</p>
+                                <p><strong>18:30–｜晚餐</strong><br>• 金森倉庫附近海鮮俱樂部、阿佐利壽喜燒，或返回五稜郭。</p>
+                            </div>
+                        ` : ''}
+
+                        ${currentDay === 3 ? `
+                            <div class="font-bold text-sm text-sky-600 pb-1 border-b border-sky-100">Day 3：近郊建築巡禮 ＆ 站前採買回程</div>
+                            <div class="space-y-2">
+                                <p><strong>09:00–11:30｜特拉皮斯汀女子修道院</strong><br>• 退房寄放行李，搭公車前往女子修道院欣賞庭園造景與市民森霜淇淋。</p>
+                                <p><strong>12:00–16:00｜函館站前最後採買與午餐</strong><br>• JR 函館站周邊享用遺珠美食、補齊伴手禮（墨魚點心、乳酪製品）。</p>
+                                <p><strong>16:00–16:30｜前往新函館北斗站</strong><br>• 搭乘 JR Hakodate Liner 前往新函館北斗。</p>
+                                <p><strong>17:26｜搭乘新幹線返回東京</strong><br>• 搭乘 Hayabusa 40号 (8號車 07DE) 於 21:23 返抵東京車站。</p>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
-            } else if (currentTab === 'spots') {
+            } 
+            // 2. 景點頁面
+            else if (currentTab === 'spots') {
                 content.innerHTML = `
                     <h2 class="text-xl font-bold mb-3 text-center">⭐ 景點口袋名單</h2>
                     <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border border-white/60 space-y-2">
@@ -126,24 +166,58 @@
                                 <div class="w-16 h-16 bg-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-500 shrink-0">📍 縮圖</div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-bold text-sm truncate">${item.name}</p>
-                                    <p class="text-xs text-slate-400 mt-1">簡易交通資訊：搭乘地鐵至某站步行 5 分鐘</p>
+                                    <p class="text-xs text-slate-400 mt-1">簡易交通資訊：請參照上方行程建議</p>
                                 </div>
                                 <button onclick="deleteSpot(${index})" class="text-red-400 text-xs">刪除</button>
                             </div>
                         `).join('') || '<p class="text-center text-slate-400 text-xs mt-8">尚無景點，快來新增吧！</p>'}
                     </div>
                 `;
-            } else if (currentTab === 'traffic') {
+            } 
+            // 3. 交通與飯店頁面 (已移至第三個分頁)
+            else if (currentTab === 'traffic') {
                 content.innerHTML = `
                     <h2 class="text-xl font-bold mb-3 text-center">📚 交通與飯店資訊</h2>
-                    <div class="space-y-3 overflow-y-auto flex-1">
-                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🏨 飯店資訊</div>
-                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🚄 去程新幹線</div>
-                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🚇 當地地鐵時刻表</div>
-                        <div class="bg-white/70 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/60 font-bold">🚄 回程新幹線</div>
+                    <div class="space-y-3 overflow-y-auto flex-1 text-xs">
+                        <!-- 飯店卡片 (含房號填寫) -->
+                        <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm border border-white/60 space-y-1">
+                            <p class="font-bold text-sm text-sky-700">🏨 飯店：ホテルマイステイズ函館五稜郭</p>
+                            <div class="flex items-center space-x-2 pt-1">
+                                <span class="font-bold">房號：</span>
+                                <input type="text" value="${hotelRoom}" oninput="saveRoom(this.value)" placeholder="直接點擊輸入房號" class="flex-1 p-1.5 border rounded-lg bg-white/90 text-xs focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- 去程新幹線 -->
+                        <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm border border-white/60 space-y-1">
+                            <p class="font-bold text-sm text-sky-700">🚄 去程新幹線</p>
+                            <p>• 班次：<strong>はやぶさ 5号</strong></p>
+                            <p>• 時間：<strong>08:00–12:30</strong> (東京站 ➔ 新函館北斗)</p>
+                            <p>• 座位：<strong>4號車 16AB</strong></p>
+                        </div>
+
+                        <!-- 回程新幹線 -->
+                        <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm border border-white/60 space-y-1">
+                            <p class="font-bold text-sm text-sky-700">🚄 回程新幹線</p>
+                            <p>• 班次：<strong>はやぶさ 40号</strong></p>
+                            <p>• 時間：<strong>17:26–21:23</strong> (新函館北斗 ➔ 東京站)</p>
+                            <p>• 座位：<strong>8號車 07DE</strong></p>
+                        </div>
+
+                        <!-- 當地交通時刻與工具 -->
+                        <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm border border-white/60 space-y-2">
+                            <p class="font-bold text-sm text-sky-700">🚇 當地交通時刻與連結</p>
+                            <div class="space-y-1 pl-2">
+                                <p>• 🚊 函館市電時刻表：請利用 Google Maps 或查詢市電官網</p>
+                                <p>• 🚌 函館巴士（湯川往聖母院路線）：班次較少，建議出發前再次確認站牌</p>
+                                <p>• 🎫 <a href="https://www.city.hakodate.hokkaido.jp/kotsu/senjo/otoku_josha.htm" target="_blank" class="text-sky-600 underline font-bold">函館市電一日券官方說明與購票網址</a></p>
+                            </div>
+                        </div>
                     </div>
                 `;
-            } else if (currentTab === 'restaurant') {
+            } 
+            // 4. 餐廳頁面
+            else if (currentTab === 'restaurant') {
                 content.innerHTML = `
                     <h2 class="text-xl font-bold mb-3 text-center">🍽️ 餐廳口袋名單</h2>
                     <div class="bg-white/70 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border border-white/60 space-y-2">
@@ -162,8 +236,9 @@
                         `).join('') || '<p class="text-center text-slate-400 text-xs mt-8">尚無餐廳紀錄</p>'}
                     </div>
                 `;
-            } else if (currentTab === 'expense') {
-                // 記帳與雙人分帳邏輯計算
+            } 
+            // 5. 記帳頁面
+            else if (currentTab === 'expense') {
                 let mayTotal = 0;
                 let pingTotal = 0;
 
@@ -172,14 +247,10 @@
                     if (e.payer === '萍') pingTotal += Number(e.amount);
                 });
 
-                // 兩人各自總花費（因為皆以兩人份為前提，總花費平分）
                 const totalExpense = mayTotal + pingTotal;
-                const eachShouldPay = totalExpense / 2;
-
-                // 誰該給誰多少錢（一人份差額計算）
-                // 舉例：May 總共代墊了多少，扣掉她自己該付的，就是別人要給她的
-                let settlementText = "兩人生日打平，無需互補";
+                let settlementText = "兩人花費已打平，無需互補";
                 let diff = Math.abs(mayTotal - pingTotal) / 2;
+                
                 if (mayTotal > pingTotal) {
                     settlementText = `萍 要給 May ￥${diff} (一人份差額)`;
                 } else if (pingTotal > mayTotal) {
@@ -204,7 +275,7 @@
                     <div class="mb-3">
                         <h3 class="text-xs font-bold text-sky-600 mb-1">May 墊的費用 (總計: ￥${mayTotal})</h3>
                         <div class="bg-white/70 backdrop-blur-md p-2 rounded-xl text-xs space-y-1 border border-white/60">
-                            ${expenses.filter(e => e.payer === 'May').map((e, idx) => `
+                            ${expenses.filter(e => e.payer === 'May').map((e) => `
                                 <div class="flex justify-between"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1">x</button></span></div>
                             `).join('') || '<span class="text-slate-400">無紀錄</span>'}
                         </div>
@@ -214,7 +285,7 @@
                     <div class="mb-3">
                         <h3 class="text-xs font-bold text-sky-600 mb-1">萍 墊的費用 (總計: ￥${pingTotal})</h3>
                         <div class="bg-white/70 backdrop-blur-md p-2 rounded-xl text-xs space-y-1 border border-white/60">
-                            ${expenses.filter(e => e.payer === '萍').map((e, idx) => `
+                            ${expenses.filter(e => e.payer === '萍').map((e) => `
                                 <div class="flex justify-between"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1">x</button></span></div>
                             `).join('') || '<span class="text-slate-400">無紀錄</span>'}
                         </div>
