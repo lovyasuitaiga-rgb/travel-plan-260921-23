@@ -12,18 +12,17 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* 鎖死外層，由內層容器滾動，避免 iOS 亂飄 */
+            overflow: hidden;
             font-family: 'Zen Maru Gothic', sans-serif;
             background-color: #e0f2fe;
             user-select: none;
             -webkit-user-select: none;
         }
-        /* 內部滾動區塊，預留底部導航列的高度與安全距離 */
         .scroll-area {
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             flex: 1;
-            padding-bottom: 90px; 
+            padding-bottom: 85px; 
         }
         ::-webkit-scrollbar {
             width: 4px;
@@ -36,7 +35,7 @@
 </head>
 <body id="body-theme" class="bg-sky-100 text-slate-700 flex flex-col items-center justify-center transition-colors duration-500">
 
-    <!-- 主容器：手機全螢幕完美貼合 -->
+    <!-- 主容器 -->
     <div id="app-container" class="w-full h-full sm:max-w-md sm:h-[92vh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl overflow-hidden transition-colors duration-500">
         
         <!-- 頂部標題列 -->
@@ -48,32 +47,37 @@
             </button>
         </header>
 
-        <!-- 內容主畫面區域（可滾動） -->
+        <!-- 內容主畫面區域 -->
         <div class="scroll-area p-4 flex flex-col">
             <div id="page-content" class="flex flex-col"></div>
         </div>
 
-        <!-- 底部五項功能導航列：絕對固定在底部，絕不跑位 -->
+        <!-- 底部導航列：無圓圈背景，僅以純淨小點標示當前頁面 -->
         <nav id="nav-theme" class="absolute bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
-            <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">🚆</div>
-                <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">交通飯店</span>
+            <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
+                <span class="text-base">🚆</span>
+                <span class="nav-label text-[10px] font-bold mt-0.5">交通飯店</span>
+                <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
-            <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">⭐</div>
-                <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">景點</span>
+            <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
+                <span class="text-base">⭐</span>
+                <span class="nav-label text-[10px] font-bold mt-0.5">景點</span>
+                <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
-            <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">📖</div>
-                <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">行程</span>
+            <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
+                <span class="text-base">📖</span>
+                <span class="nav-label text-[10px] font-bold mt-0.5">行程</span>
+                <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
-            <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">🍣</div>
-                <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">美食</span>
+            <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
+                <span class="text-base">🍣</span>
+                <span class="nav-label text-[10px] font-bold mt-0.5">美食</span>
+                <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
-            <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1 w-1/5">
-                <div class="icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl">💰</div>
-                <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">記帳</span>
+            <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
+                <span class="text-base">💰</span>
+                <span class="nav-label text-[10px] font-bold mt-0.5">記帳</span>
+                <div class="dot w-1 h-1 rounded-full mt-0.5 opacity-0 transition-all"></div>
             </div>
         </nav>
     </div>
@@ -149,20 +153,21 @@
             let cSubBg = currentTheme === 'night' ? 'bg-slate-900/80 border-slate-700 text-slate-200' : (currentTheme === 'paper' ? 'bg-amber-100/60 border-amber-200 text-amber-900' : 'bg-sky-50/70 border-sky-100 text-slate-600');
             let cPrimaryBtn = currentTheme === 'night' ? 'bg-indigo-600 hover:bg-indigo-500 text-white' : (currentTheme === 'paper' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-sky-400 hover:bg-sky-500 text-white');
             let cTextAccent = currentTheme === 'night' ? 'text-indigo-300' : (currentTheme === 'paper' ? 'text-amber-800' : 'text-sky-700');
-            let activeNavBg = currentTheme === 'night' ? 'bg-indigo-900/80 text-indigo-200' : (currentTheme === 'paper' ? 'bg-amber-200/90 text-amber-900' : 'bg-sky-200/90 text-sky-900');
+            let dotColor = currentTheme === 'night' ? 'bg-indigo-400' : (currentTheme === 'paper' ? 'bg-amber-700' : 'bg-sky-500');
 
             const tabs = ['traffic', 'spots', 'itinerary', 'restaurant', 'expense'];
             tabs.forEach((t, idx) => {
                 const navItem = document.querySelectorAll('.nav-item')[idx];
-                const iconBg = navItem.querySelector('.icon-bg');
                 const navLabel = navItem.querySelector('.nav-label');
+                const dot = navItem.querySelector('.dot');
                 
                 navLabel.className = `nav-label text-[10px] font-bold mt-0.5 ${currentTheme === 'night' ? 'text-slate-400' : (currentTheme === 'paper' ? 'text-amber-900/70' : 'text-slate-500')}`;
 
                 if (t === currentTab) {
-                    iconBg.className = `icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl ${activeNavBg} shadow-sm scale-105`;
+                    navLabel.classList.add(currentTheme === 'night' ? 'text-indigo-300' : (currentTheme === 'paper' ? 'text-amber-900' : 'text-sky-600'));
+                    dot.className = `dot w-1 h-1 rounded-full mt-0.5 opacity-100 ${dotColor}`;
                 } else {
-                    iconBg.className = `icon-bg w-9 h-9 flex items-center justify-center text-base transition-all rounded-2xl ${currentTheme==='night'?'bg-slate-800/55 text-slate-300':(currentTheme==='paper'?'bg-amber-100/50 text-amber-900':'bg-sky-200/50 text-slate-700')}`;
+                    dot.className = `dot w-1 h-1 rounded-full mt-0.5 opacity-0`;
                 }
             });
 
