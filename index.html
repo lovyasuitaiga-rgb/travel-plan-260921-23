@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>✨ 函館悠閒三日遊 ✨</title>
+    <title>✨ 我們的函館浪漫三日遊 ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Zen Maru Gothic', sans-serif;
-            overscroll-behavior-y: none;
-            position: fixed;
+        html, body {
+            margin: 0;
+            padding: 0;
             width: 100%;
-            height: 100dvh;
+            height: 100%;
             overflow: hidden;
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: #e0f2fe;
+            user-select: none;
+            -webkit-user-select: none;
         }
         ::-webkit-scrollbar {
             width: 4px;
@@ -24,11 +27,11 @@
         }
     </style>
 </head>
-<body id="body-theme" class="bg-sky-100 text-slate-700 m-0 select-none transition-colors duration-500">
+<body id="body-theme" class="bg-sky-100 text-slate-700 flex justify-center items-center transition-colors duration-500">
 
-    <div id="app-container" class="w-full h-[100dvh] sm:max-w-md sm:h-[92dvh] sm:mx-auto sm:my-auto sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col justify-between relative shadow-2xl transition-colors duration-500">
+    <div id="app-container" class="w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden">
         
-        <!-- 頂部裝飾標題列 -->
+        <!-- 頂部裝飾標題列 (固定不滾動) -->
         <header id="header-theme" class="bg-sky-300/65 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500">
             <span id="header-tag" class="text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm">🌸 函館散策手帳</span>
             <button onclick="cycleTheme()" id="theme-btn" class="text-xs font-bold bg-white/90 hover:bg-white px-3 py-1.5 rounded-full text-slate-600 shadow-sm transition-all flex items-center space-x-1 cursor-pointer">
@@ -37,12 +40,12 @@
             </button>
         </header>
 
-        <!-- 內容主畫面區域 (修正 min-h-0 讓手機版能夠正常上下滑動) -->
-        <main class="flex-1 min-h-0 overflow-y-auto p-4 pb-24 flex flex-col">
+        <!-- 內容主畫面區域 (獨立滾動區域) -->
+        <main class="flex-1 overflow-y-auto p-4 pb-24 flex flex-col z-10">
             <div id="page-content" class="flex flex-col"></div>
         </main>
 
-        <!-- 底部五項功能導航列 -->
+        <!-- 底部五項功能導航列 (固定在底部) -->
         <nav id="nav-theme" class="absolute bottom-0 left-0 right-0 h-18 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe">
             <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
                 <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl">🚆</div>
@@ -99,24 +102,24 @@
             const themeText = document.getElementById('theme-text');
 
             if (currentTheme === 'sky') {
-                body.className = "bg-sky-100 text-slate-700 m-0 select-none transition-colors duration-500";
-                container.className = "w-full h-[100dvh] sm:max-w-md sm:h-[92dvh] sm:mx-auto sm:my-auto sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col justify-between relative shadow-2xl transition-colors duration-500";
+                body.className = "bg-sky-100 text-slate-700 flex justify-center items-center h-full transition-colors duration-500";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden";
                 header.className = "bg-sky-300/65 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm";
                 headerTag.innerText = "🌸 函館散策手帳";
                 nav.className = "absolute bottom-0 left-0 right-0 h-18 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
                 themeIcon.innerText = "☁️"; themeText.innerText = "青空風格";
             } else if (currentTheme === 'paper') {
-                body.className = "bg-amber-100/70 text-amber-950 m-0 select-none transition-colors duration-500";
-                container.className = "w-full h-[100dvh] sm:max-w-md sm:h-[92dvh] sm:mx-auto sm:my-auto sm:rounded-3xl sm:border-4 sm:border-amber-200 bg-[#fbfbde] flex flex-col justify-between relative shadow-2xl transition-colors duration-500";
+                body.className = "bg-amber-100/70 text-amber-950 flex justify-center items-center h-full transition-colors duration-500";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-amber-200 bg-[#fbfbde] flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden";
                 header.className = "bg-amber-200/80 backdrop-blur-md px-4 py-3 text-center border-b border-amber-300/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-amber-100 px-2.5 py-1 rounded-full text-amber-800 shadow-sm";
                 headerTag.innerText = "📜 復古筆記手帳";
                 nav.className = "absolute bottom-0 left-0 right-0 h-18 bg-[#fefce8]/95 backdrop-blur-md border-t border-amber-200 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
                 themeIcon.innerText = "📜"; themeText.innerText = "紙質筆記";
             } else if (currentTheme === 'night') {
-                body.className = "bg-slate-950 text-slate-100 m-0 select-none transition-colors duration-500";
-                container.className = "w-full h-[100dvh] sm:max-w-md sm:h-[92dvh] sm:mx-auto sm:my-auto sm:rounded-3xl sm:border-4 sm:border-slate-700 bg-slate-900 flex flex-col justify-between relative shadow-2xl transition-colors duration-500";
+                body.className = "bg-slate-950 text-slate-100 flex justify-center items-center h-full transition-colors duration-500";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-slate-700 bg-slate-900 flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden";
                 header.className = "bg-indigo-950/80 backdrop-blur-md px-4 py-3 text-center border-b border-indigo-900/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-indigo-900/80 px-2.5 py-1 rounded-full text-indigo-200 shadow-sm";
                 headerTag.innerText = "🌌 函館山百萬夜景";
