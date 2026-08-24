@@ -39,28 +39,33 @@
             </div>
         </main>
 
-        <!-- 底部五項功能導航列 (1.行程 / 2.景點 / 3.交通與飯店 / 4.餐廳 / 5.記帳) -->
+        <!-- 底部五項功能導航列 (1.交通飯店 / 2.景點 / 3.行程[置中] / 4.美食 / 5.記帳) -->
         <nav class="absolute bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg">
-            <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">📅</div>
-                <span class="text-[10px] font-bold text-slate-500 mt-0.5">行程</span>
-                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
-            </div>
-            <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">⭐</div>
-                <span class="text-[10px] font-bold text-slate-500 mt-0.5">景點</span>
-                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
-            </div>
+            <!-- 1. 交通飯店 -->
             <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
                 <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">🚆</div>
                 <span class="text-[10px] font-bold text-slate-500 mt-0.5">交通飯店</span>
                 <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
+            <!-- 2. 景點 -->
+            <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
+                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">⭐</div>
+                <span class="text-[10px] font-bold text-slate-500 mt-0.5">景點</span>
+                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
+            </div>
+            <!-- 3. 行程 (置中焦點) -->
+            <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
+                <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all rounded-2xl bg-sky-200/50 shadow-sm">📖</div>
+                <span class="text-[10px] font-bold text-sky-700 mt-0.5">行程</span>
+                <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
+            </div>
+            <!-- 4. 美食 -->
             <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
                 <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">🍣</div>
                 <span class="text-[10px] font-bold text-slate-500 mt-0.5">美食</span>
                 <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
+            <!-- 5. 記帳 -->
             <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
                 <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">💰</div>
                 <span class="text-[10px] font-bold text-slate-500 mt-0.5">記帳</span>
@@ -96,7 +101,8 @@
         function render() {
             const content = document.getElementById('page-content');
             
-            const tabs = ['itinerary', 'spots', 'traffic', 'restaurant', 'expense'];
+            // 順序對應導航列：traffic, spots, itinerary, restaurant, expense
+            const tabs = ['traffic', 'spots', 'itinerary', 'restaurant', 'expense'];
             tabs.forEach((t, idx) => {
                 const navItem = document.querySelectorAll('.nav-item')[idx];
                 const indicator = navItem.querySelector('.indicator');
@@ -104,14 +110,14 @@
                 
                 if (t === currentTab) {
                     indicator.style.opacity = '1';
-                    iconBg.classList.add('bg-sky-200/80', 'shadow-sm');
+                    iconBg.classList.add('bg-sky-200/90', 'shadow-sm');
                 } else {
                     indicator.style.opacity = '0';
-                    iconBg.classList.remove('bg-sky-200/80', 'shadow-sm');
+                    iconBg.classList.remove('bg-sky-200/90', 'shadow-sm');
                 }
             });
 
-            // 1. 行程頁面 (首頁，精緻可愛風)
+            // 1. 行程頁面 (預設首頁，置中)
             if (currentTab === 'itinerary') {
                 content.innerHTML = `
                     <div class="text-center mb-3">
@@ -198,29 +204,7 @@
                     </div>
                 `;
             } 
-            // 2. 景點頁面
-            else if (currentTab === 'spots') {
-                content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center text-sky-700">⭐ 景點口袋名單</h2>
-                    <div class="bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border border-sky-100 space-y-2">
-                        <input type="text" id="spot-url" placeholder="輸入 Google Map 連結或景點名稱" class="w-full p-2.5 border border-sky-200 rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-sky-400">
-                        <button onclick="addSpot()" class="w-full bg-sky-400 hover:bg-sky-500 text-white py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增景點口袋</button>
-                    </div>
-                    <div class="space-y-3 overflow-y-auto flex-1">
-                        ${spots.map((item, index) => `
-                            <div class="bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center space-x-3 border border-sky-100">
-                                <div class="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center text-lg shrink-0">📍</div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-bold text-xs truncate text-slate-700">${item.name}</p>
-                                    <p class="text-[10px] text-sky-500 mt-0.5">已加入自訂口袋清單</p>
-                                </div>
-                                <button onclick="deleteSpot(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-2 py-1">刪除</button>
-                            </div>
-                        `).join('') || '<div class="text-center text-slate-400 text-xs mt-12 bg-white/40 p-6 rounded-3xl border border-dashed border-sky-200">✨ 點上方輸入框，加入你想去的私房景點吧！</div>'}
-                    </div>
-                `;
-            } 
-            // 3. 交通與飯店頁面 (完整外觀、地址、時刻表)
+            // 2. 交通與飯店頁面
             else if (currentTab === 'traffic') {
                 content.innerHTML = `
                     <h2 class="text-lg font-bold mb-3 text-center text-sky-700">📚 交通與住宿完整指南</h2>
@@ -287,6 +271,28 @@
                     </div>
                 `;
             } 
+            // 3. 景點頁面
+            else if (currentTab === 'spots') {
+                content.innerHTML = `
+                    <h2 class="text-lg font-bold mb-3 text-center text-sky-700">⭐ 景點口袋名單</h2>
+                    <div class="bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border border-sky-100 space-y-2">
+                        <input type="text" id="spot-url" placeholder="輸入 Google Map 連結或景點名稱" class="w-full p-2.5 border border-sky-200 rounded-xl text-xs bg-white focus:outline-none focus:ring-2 focus:ring-sky-400">
+                        <button onclick="addSpot()" class="w-full bg-sky-400 hover:bg-sky-500 text-white py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增景點口袋</button>
+                    </div>
+                    <div class="space-y-3 overflow-y-auto flex-1">
+                        ${spots.map((item, index) => `
+                            <div class="bg-white/80 backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center space-x-3 border border-sky-100">
+                                <div class="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center text-lg shrink-0">📍</div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-bold text-xs truncate text-slate-700">${item.name}</p>
+                                    <p class="text-[10px] text-sky-500 mt-0.5">已加入自訂口袋清單</p>
+                                </div>
+                                <button onclick="deleteSpot(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-2 py-1">刪除</button>
+                            </div>
+                        `).join('') || '<div class="text-center text-slate-400 text-xs mt-12 bg-white/40 p-6 rounded-3xl border border-dashed border-sky-200">✨ 點上方輸入框，加入你想去的私房景點吧！</div>'}
+                    </div>
+                `;
+            } 
             // 4. 餐廳頁面
             else if (currentTab === 'restaurant') {
                 content.innerHTML = `
@@ -349,7 +355,7 @@
                             <h3 class="text-xs font-bold text-sky-600 mb-1.5 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayTotal}</span></h3>
                             <div class="space-y-1 text-xs">
                                 ${expenses.filter(e => e.payer === 'May').map((e) => `
-                                    <div class="flex justify-between text-slate-600 bg-sky-50/50 px-2 py-1 rounded-lg"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1.5 font-bold">×k</button></span></div>
+                                    <div class="flex justify-between text-slate-600 bg-sky-50/50 px-2 py-1 rounded-lg"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
                                 `).join('') || '<span class="text-slate-400 text-[11px]">尚無紀錄</span>'}
                             </div>
                         </div>
