@@ -2,18 +2,17 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ 函館悠閒三日遊 ✨</title>
-    <!-- 引入 Google Fonts 手寫感可愛圓體 (Zen Maru Gothic) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>✨ 我們的函館浪漫三日遊 ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Zen Maru Gothic', sans-serif;
+            overscroll-behavior-y: none;
         }
-        /* 自定義可愛捲軸 */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         ::-webkit-scrollbar-thumb {
             background: rgba(150, 150, 150, 0.3);
@@ -21,56 +20,48 @@
         }
     </style>
 </head>
-<body id="body-theme" class="bg-sky-100 text-slate-700 flex justify-center items-center min-h-screen m-0 select-none transition-colors duration-500">
+<body id="body-theme" class="bg-sky-100 text-slate-700 flex justify-center items-center h-[100dvh] m-0 select-none transition-colors duration-500 overflow-hidden">
 
-    <!-- 手機外框容器 (固定手機比例 RWD) -->
-    <div id="app-container" class="w-full max-w-md h-[880px] bg-sky-50 flex flex-col justify-between relative shadow-2xl overflow-hidden rounded-3xl border-4 border-white transition-colors duration-500">
+    <div id="app-container" class="w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col justify-between relative shadow-2xl overflow-hidden transition-colors duration-500">
         
-        <!-- 頂部裝飾標題列 (點擊右側按鈕可循環切換主題) -->
-        <header id="header-theme" class="bg-sky-300/65 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 transition-colors duration-500">
-            <span id="header-tag" class="text-xs font-bold bg-white/80 px-2.5 py-1 rounded-full text-sky-600 shadow-sm">🌸 函館散策手帳</span>
+        <!-- 頂部裝飾標題列 -->
+        <header id="header-theme" class="bg-sky-300/65 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500">
+            <span id="header-tag" class="text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm">🌸 函館散策手帳</span>
             <button onclick="cycleTheme()" id="theme-btn" class="text-xs font-bold bg-white/90 hover:bg-white px-3 py-1.5 rounded-full text-slate-600 shadow-sm transition-all flex items-center space-x-1 cursor-pointer">
                 <span id="theme-icon">☁️</span>
                 <span id="theme-text">青空風格</span>
             </button>
         </header>
 
-        <!-- 內容主畫面區域 -->
+        <!-- 內容主畫面區域 (獨立捲動) -->
         <main class="flex-1 overflow-y-auto p-4 pb-24 flex flex-col">
-            <div id="page-content" class="flex-1 flex flex-col">
-                <!-- 動態載入頁面內容 -->
-            </div>
+            <div id="page-content" class="flex-1 flex flex-col"></div>
         </main>
 
-        <!-- 底部五項功能導航列 (1.交通飯店 / 2.景點 / 3.行程[置中] / 4.美食 / 5.記帳) -->
-        <nav id="nav-theme" class="absolute bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg transition-colors duration-500">
-            <!-- 1. 交通飯店 -->
+        <!-- 底部五項功能導航列 -->
+        <nav id="nav-theme" class="absolute bottom-0 left-0 right-0 h-18 bg-white/90 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe">
             <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">🚆</div>
+                <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl">🚆</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">交通飯店</span>
                 <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
-            <!-- 2. 景點 -->
             <div onclick="switchTab('spots')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">⭐</div>
+                <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl">⭐</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">景點</span>
                 <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
-            <!-- 3. 行程 (置中焦點) -->
             <div onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all rounded-2xl shadow-sm">📖</div>
+                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl shadow-sm">📖</div>
                 <span class="nav-label text-[10px] font-bold mt-0.5">行程</span>
                 <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
-            <!-- 4. 美食 -->
             <div onclick="switchTab('restaurant')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">🍣</div>
+                <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl">🍣</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">美食</span>
                 <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
-            <!-- 5. 記帳 -->
             <div onclick="switchTab('expense')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
-                <div class="icon-bg w-11 h-11 flex items-center justify-center text-xl transition-all rounded-2xl">💰</div>
+                <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl">💰</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">記帳</span>
                 <div class="indicator w-1.5 h-1.5 rounded-full bg-sky-400 opacity-0 transition-all"></div>
             </div>
@@ -80,25 +71,17 @@
     <script>
         let currentTab = 'itinerary';
         let currentDay = 1;
-
-        // 主題設定: 'sky' (青空), 'paper' (紙質筆記), 'night' (夜景觀星)
         let currentTheme = localStorage.getItem('hakodate_theme') || 'sky';
-
         let restaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
         let spots = JSON.parse(localStorage.getItem('spots')) || [];
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
         let hotelRoom = localStorage.getItem('hotelRoom') || '';
 
         function cycleTheme() {
-            if (currentTheme === 'sky') {
-                currentTheme = 'paper';
-            } else if (currentTheme === 'paper') {
-                currentTheme = 'night';
-            } else {
-                currentTheme = 'sky';
-            }
+            if (currentTheme === 'sky') currentTheme = 'paper';
+            else if (currentTheme === 'paper') currentTheme = 'night';
+            else currentTheme = 'sky';
             localStorage.setItem('hakodate_theme', currentTheme);
-            applyTheme();
             render();
         }
 
@@ -112,55 +95,40 @@
             const themeText = document.getElementById('theme-text');
 
             if (currentTheme === 'sky') {
-                body.className = "bg-sky-100 text-slate-700 flex justify-center items-center min-h-screen m-0 select-none transition-colors duration-500";
-                container.className = "w-full max-w-md h-[880px] bg-sky-50 flex flex-col justify-between relative shadow-2xl overflow-hidden rounded-3xl border-4 border-white transition-colors duration-500";
-                header.className = "bg-sky-300/65 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 transition-colors duration-500";
+                body.className = "bg-sky-100 text-slate-700 flex justify-center items-center h-[100dvh] m-0 select-none transition-colors duration-500 overflow-hidden";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col justify-between relative shadow-2xl overflow-hidden transition-colors duration-500";
+                header.className = "bg-sky-300/65 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm";
                 headerTag.innerText = "🌸 函館散策手帳";
-                nav.className = "absolute bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg transition-colors duration-500";
-                themeIcon.innerText = "☁️";
-                themeText.innerText = "青空風格";
+                nav.className = "absolute bottom-0 left-0 right-0 h-18 bg-white/90 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
+                themeIcon.innerText = "☁️"; themeText.innerText = "青空風格";
             } else if (currentTheme === 'paper') {
-                body.className = "bg-amber-100/70 text-amber-950 flex justify-center items-center min-h-screen m-0 select-none transition-colors duration-500";
-                container.className = "w-full max-w-md h-[880px] bg-[#fbfbde] flex flex-col justify-between relative shadow-2xl overflow-hidden rounded-3xl border-4 border-amber-200 transition-colors duration-500";
-                header.className = "bg-amber-200/80 backdrop-blur-md px-4 py-3 text-center border-b border-amber-300/60 flex items-center justify-between z-35 transition-colors duration-500";
+                body.className = "bg-amber-100/70 text-amber-950 flex justify-center items-center h-[100dvh] m-0 select-none transition-colors duration-500 overflow-hidden";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-amber-200 bg-[#fbfbde] flex flex-col justify-between relative shadow-2xl overflow-hidden transition-colors duration-500";
+                header.className = "bg-amber-200/80 backdrop-blur-md px-4 py-3 text-center border-b border-amber-300/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-amber-100 px-2.5 py-1 rounded-full text-amber-800 shadow-sm";
                 headerTag.innerText = "📜 復古筆記手帳";
-                nav.className = "absolute bottom-0 left-0 right-0 h-20 bg-[#fefce8]/95 backdrop-blur-md border-t border-amber-200 flex justify-around items-center px-2 z-40 shadow-lg transition-colors duration-500";
-                themeIcon.innerText = "📜";
-                themeText.innerText = "紙質筆記";
+                nav.className = "absolute bottom-0 left-0 right-0 h-18 bg-[#fefce8]/95 backdrop-blur-md border-t border-amber-200 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
+                themeIcon.innerText = "📜"; themeText.innerText = "紙質筆記";
             } else if (currentTheme === 'night') {
-                body.className = "bg-slate-950 text-slate-100 flex justify-center items-center min-h-screen m-0 select-none transition-colors duration-500";
-                container.className = "w-full max-w-md h-[880px] bg-slate-900 flex flex-col justify-between relative shadow-2xl overflow-hidden rounded-3xl border-4 border-slate-700 transition-colors duration-500";
-                header.className = "bg-indigo-950/80 backdrop-blur-md px-4 py-3 text-center border-b border-indigo-900/60 flex items-center justify-between z-35 transition-colors duration-500";
+                body.className = "bg-slate-950 text-slate-100 flex justify-center items-center h-[100dvh] m-0 select-none transition-colors duration-500 overflow-hidden";
+                container.className = "w-full h-full sm:max-w-md sm:h-[92dvh] sm:rounded-3xl sm:border-4 sm:border-slate-700 bg-slate-900 flex flex-col justify-between relative shadow-2xl overflow-hidden transition-colors duration-500";
+                header.className = "bg-indigo-950/80 backdrop-blur-md px-4 py-3 text-center border-b border-indigo-900/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-indigo-900/80 px-2.5 py-1 rounded-full text-indigo-200 shadow-sm";
                 headerTag.innerText = "🌌 函館山百萬夜景";
-                nav.className = "absolute bottom-0 left-0 right-0 h-20 bg-slate-900/95 backdrop-blur-md border-t border-indigo-900 flex justify-around items-center px-2 z-40 shadow-lg transition-colors duration-500";
-                themeIcon.innerText = "🌌";
-                themeText.innerText = "夜景觀星";
+                nav.className = "absolute bottom-0 left-0 right-0 h-18 bg-slate-900/95 backdrop-blur-md border-t border-indigo-900 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
+                themeIcon.innerText = "🌌"; themeText.innerText = "夜景觀星";
             }
         }
 
-        function switchTab(tab) {
-            currentTab = tab;
-            render();
-        }
-
-        function switchDay(day) {
-            currentDay = day;
-            render();
-        }
-
-        function saveRoom(val) {
-            hotelRoom = val;
-            localStorage.setItem('hotelRoom', val);
-        }
+        function switchTab(tab) { currentTab = tab; render(); }
+        function switchDay(day) { currentDay = day; render(); }
+        function saveRoom(val) { hotelRoom = val; localStorage.setItem('hotelRoom', val); }
 
         function render() {
             applyTheme();
             const content = document.getElementById('page-content');
             
-            // 依據不同主題定義色彩配置變數
             let cBg = currentTheme === 'night' ? 'bg-slate-800/90 border-slate-700 text-slate-100' : (currentTheme === 'paper' ? 'bg-amber-50/90 border-amber-200 text-amber-950' : 'bg-white/80 border-sky-100 text-slate-700');
             let cSubBg = currentTheme === 'night' ? 'bg-slate-900/80 border-slate-700 text-slate-200' : (currentTheme === 'paper' ? 'bg-amber-100/60 border-amber-200 text-amber-900' : 'bg-sky-50/70 border-sky-100 text-slate-600');
             let cPrimaryBtn = currentTheme === 'night' ? 'bg-indigo-600 hover:bg-indigo-500 text-white' : (currentTheme === 'paper' ? 'bg-amber-600 hover:bg-amber-700 text-white' : 'bg-sky-400 hover:bg-sky-500 text-white');
@@ -180,36 +148,32 @@
 
                 if (t === currentTab) {
                     indicator.style.opacity = '1';
-                    iconBg.className = `icon-bg w-11 h-11 md:w-12 md:h-12 flex items-center justify-center text-xl transition-all rounded-2xl ${activeNavBg}`;
-                    if(t === 'itinerary') iconBg.className = `icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all rounded-2xl ${activeNavBg}`;
+                    iconBg.className = `icon-bg w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-lg sm:text-xl transition-all rounded-2xl ${activeNavBg}`;
+                    if(t === 'itinerary') iconBg.className = `icon-bg w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center text-xl sm:text-2xl transition-all rounded-2xl ${activeNavBg}`;
                 } else {
                     indicator.style.opacity = '0';
-                    iconBg.className = `icon-bg w-11 h-11 md:w-12 md:h-12 flex items-center justify-center text-xl transition-all rounded-2xl`;
-                    if(t === 'itinerary') iconBg.className = `icon-bg w-12 h-12 flex items-center justify-center text-2xl transition-all rounded-2xl ${currentTheme==='night'?'bg-slate-800/55':(currentTheme==='paper'?'bg-amber-100/50':'bg-sky-200/50')}`;
+                    iconBg.className = `icon-bg w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-lg sm:text-xl transition-all rounded-2xl`;
+                    if(t === 'itinerary') iconBg.className = `icon-bg w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center text-xl sm:text-2xl transition-all rounded-2xl ${currentTheme==='night'?'bg-slate-800/55':(currentTheme==='paper'?'bg-amber-100/50':'bg-sky-200/50')}`;
                 }
             });
 
-            // 1. 行程頁面
             if (currentTab === 'itinerary') {
                 let dayBtnActive = currentTheme === 'night' ? 'bg-indigo-600 text-white shadow-md scale-105' : (currentTheme === 'paper' ? 'bg-amber-700 text-white shadow-md scale-105' : 'bg-sky-500 text-white shadow-md scale-105');
                 let dayBtnNormal = currentTheme === 'night' ? 'bg-slate-800 text-slate-300 border border-slate-700' : (currentTheme === 'paper' ? 'bg-amber-50 text-amber-900 border border-amber-200' : 'bg-white text-slate-600 border border-sky-200');
 
                 content.innerHTML = `
-                    <div class="text-center mb-3">
+                    <div class="text-center mb-3 shrink-0">
                         <h2 class="text-lg font-bold ${cTextAccent}">✨ 函館三日漫遊行程 ✨</h2>
                         <p class="text-[11px] ${currentTheme === 'night' ? 'text-slate-400' : (currentTheme === 'paper' ? 'text-amber-900/60' : 'text-slate-400')}">點擊下方按鈕切換每日精彩旅程</p>
                     </div>
-
-                    <!-- Day 切換按鈕 -->
-                    <div class="flex justify-center space-x-2 mb-4">
+                    <div class="flex justify-center space-x-2 mb-4 shrink-0">
                         <button onclick="switchDay(1)" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${currentDay === 1 ? dayBtnActive : dayBtnNormal}">Day 1 🌟 抵達與夜景</button>
                         <button onclick="switchDay(2)" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${currentDay === 2 ? dayBtnActive : dayBtnNormal}">Day 2 🏮 異國風情</button>
                         <button onclick="switchDay(3)" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${currentDay === 3 ? dayBtnActive : dayBtnNormal}">Day 3 🍦 修道院賦歸</button>
                     </div>
-
                     <div class="${cBg} backdrop-blur-md p-4 rounded-3xl shadow-sm flex-1 overflow-y-auto border space-y-3 text-xs leading-relaxed">
                         ${currentDay === 1 ? `
-                            <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b ${currentTheme==='night'?'border-slate-700':(currentTheme==='paper'?'border-amber-200':'border-sky-100')}">
+                            <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b">
                                 <span class="${cSubBg} p-1.5 rounded-xl border">🚄</span>
                                 <span>Day 1：抵達函館 ＆ 五稜郭與百萬夜景</span>
                             </div>
@@ -230,9 +194,8 @@
                                 </div>
                             </div>
                         ` : ''}
-
                         ${currentDay === 2 ? `
-                            <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b ${currentTheme==='night'?'border-slate-700':(currentTheme==='paper'?'border-amber-200':'border-sky-100')}">
+                            <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b">
                                 <span class="${cSubBg} p-1.5 rounded-xl border">🏮</span>
                                 <span>Day 2：港町風情、古蹟散策與沿海體驗</span>
                             </div>
@@ -253,9 +216,8 @@
                                 </div>
                             </div>
                         ` : ''}
-
                         ${currentDay === 3 ? `
-                            <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b ${currentTheme==='night'?'border-slate-700':(currentTheme==='paper'?'border-amber-200':'border-sky-100')}">
+                            <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b">
                                 <span class="${cSubBg} p-1.5 rounded-xl border">🍦</span>
                                 <span>Day 3：女子修道院巡禮 ＆ 歡樂賦歸</span>
                             </div>
@@ -278,14 +240,10 @@
                         ` : ''}
                     </div>
                 `;
-            } 
-            // 2. 交通飯店頁面
-            else if (currentTab === 'traffic') {
+            } else if (currentTab === 'traffic') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center ${cTextAccent}">📚 交通與住宿完整指南</h2>
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">📚 交通與住宿完整指南</h2>
                     <div class="space-y-3 overflow-y-auto flex-1 text-xs">
-                        
-                        <!-- 飯店資訊卡片 -->
                         <div class="${cBg} backdrop-blur-md p-3.5 rounded-2xl shadow-sm border space-y-2">
                             <div class="flex items-center space-x-2">
                                 <span class="text-lg">🏨</span>
@@ -294,21 +252,19 @@
                                     <p class="text-[10px] opacity-70">MyStays Hakodate Goryokaku</p>
                                 </div>
                             </div>
-                            <div class="w-full h-24 bg-gradient-to-r ${currentTheme==='night'?'from-slate-900 to-indigo-950 text-indigo-200':(currentTheme==='paper'?'from-amber-200 to-amber-300 text-amber-900':'from-sky-200 to-indigo-100 text-sky-800')} rounded-xl flex flex-col items-center justify-center text-xs shadow-inner">
-                                <span class="text-2xl mb-1">🏢</span>
+                            <div class="w-full h-20 bg-gradient-to-r ${currentTheme==='night'?'from-slate-900 to-indigo-950 text-indigo-200':(currentTheme==='paper'?'from-amber-200 to-amber-300 text-amber-900':'from-sky-200 to-indigo-100 text-sky-800')} rounded-xl flex flex-col items-center justify-center text-xs shadow-inner">
+                                <span class="text-xl mb-0.5">🏢</span>
                                 <span class="font-bold text-[11px]">簡潔舒適的現代商旅・鄰近五稜郭公園</span>
                             </div>
-                            <div class="text-[11px] space-y-1 pt-1 border-t ${currentTheme==='night'?'border-slate-700':(currentTheme==='paper'?'border-amber-200':'border-sky-50')}">
+                            <div class="text-[11px] space-y-1 pt-1 border-t">
                                 <p>📍 <strong>地址：</strong>北海道函館市本町26-17 <a href="https://maps.google.com/?q=北海道函館市本町26-17" target="_blank" class="${cTextAccent} underline font-bold">[地圖]</a></p>
                                 <p>🚇 <strong>交通：</strong>JR函館站搭市電 15 分鐘至「五稜郭公園前」站，下車步行 1 分鐘</p>
                             </div>
-                            <div class="flex items-center space-x-2 pt-2 border-t ${currentTheme==='night'?'border-slate-700':(currentTheme==='paper'?'border-amber-200':'border-sky-50')}">
+                            <div class="flex items-center space-x-2 pt-2 border-t">
                                 <span class="font-bold ${cTextAccent}">🔑 我的房間號碼：</span>
                                 <input type="text" value="${hotelRoom}" oninput="saveRoom(this.value)" placeholder="點此輸入房號" class="flex-1 p-1.5 border rounded-lg ${cSubBg} text-xs font-bold text-center focus:outline-none">
                             </div>
                         </div>
-
-                        <!-- 新幹線指定席 -->
                         <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm border space-y-1.5">
                             <p class="font-bold text-xs ${cTextAccent} flex items-center"><span class="mr-1.5">🚄</span> 新幹線指定席資訊</p>
                             <div class="grid grid-cols-2 gap-2 pt-1 text-[11px]">
@@ -324,93 +280,66 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 市電與巴士 -->
                         <div class="${cBg} backdrop-blur-md p-3.5 rounded-2xl shadow-sm border space-y-2.5">
                             <p class="font-bold text-xs ${cTextAccent} flex items-center"><span class="mr-1.5">🚊</span> 當地市電與巴士時刻導覽</p>
                             <div class="space-y-2 text-[11px]">
                                 <div class="${cSubBg} p-2 rounded-xl border">
                                     <p class="font-bold ${cTextAccent} mb-0.5">🚋 函館市電（路面電車）</p>
-                                    <p class="leading-relaxed">• <strong>運行班距：</strong>約 6 至 10 分鐘一班，非常密集。<br>• <strong>主要路線：</strong>2系統與5系統皆會經過「五稜郭公園前」與「十字街」站。<br>• 🎫 推薦購買 <a href="https://www.city.hakodate.hokkaido.jp/kotsu/senjo/otoku_josha.htm" target="_blank" class="${cTextAccent} underline font-bold">函館市電一日乘車券</a>，無限次搭乘最划算！</p>
-                                </div>
-                                <div class="${cSubBg} p-2 rounded-xl border">
-                                    <p class="font-bold ${cTextAccent} mb-0.5">🚌 函館巴士（湯川往女子修道院方向）</p>
-                                    <p class="leading-relaxed">• <strong>主要班次：</strong>由湯川溫泉/湯倉神社前出發前往「トラピスチヌ前（女子修道院）」大約每 60 分鐘一班。<br>• <strong>回程班次：</strong>修道院前發車約為每小時的 10 分鐘。建議出發前搭配 Google Maps 即時動態確認！</p>
+                                    <p class="leading-relaxed">• <strong>運行班距：</strong>約 6 至 10 分鐘一班。<br>• 🎫 推薦購買 <a href="https://www.city.hakodate.hokkaido.jp/kotsu/senjo/otoku_josha.htm" target="_blank" class="${cTextAccent} underline font-bold">函館市電一日乘車券</a>最划算！</p>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 `;
-            } 
-            // 3. 景點口袋名單
-            else if (currentTab === 'spots') {
+            } else if (currentTab === 'spots') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center ${cTextAccent}">⭐ 景點口袋名單</h2>
-                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border space-y-2">
-                        <input type="text" id="spot-url" placeholder="輸入 Google Map 連結或景點名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點口袋名單</h2>
+                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
+                        <input type="text" id="spot-url" placeholder="輸入景點名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="addSpot()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增景點口袋</button>
                     </div>
                     <div class="space-y-3 overflow-y-auto flex-1">
                         ${spots.map((item, index) => `
                             <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center space-x-3 border">
-                                <div class="w-12 h-12 ${cSubBg} rounded-xl flex items-center justify-center text-lg shrink-0 border">📍</div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="font-bold text-xs truncate">${item.name}</p>
-                                    <p class="text-[10px] ${cTextAccent} mt-0.5">已加入自訂口袋清單</p>
-                                </div>
+                                <div class="w-10 h-10 ${cSubBg} rounded-xl flex items-center justify-center text-base shrink-0 border">📍</div>
+                                <div class="flex-1 min-w-0"><p class="font-bold text-xs truncate">${item.name}</p></div>
                                 <button onclick="deleteSpot(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-2 py-1">刪除</button>
                             </div>
-                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 點上方輸入框，加入你想去的私房景點吧！</div>`}
+                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點吧！</div>`}
                     </div>
                 `;
-            } 
-            // 4. 美食口袋名單
-            else if (currentTab === 'restaurant') {
+            } else if (currentTab === 'restaurant') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center ${cTextAccent}">🍣 美食口袋名單</h2>
-                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border space-y-2">
-                        <input type="text" id="resto-url" placeholder="輸入 Google Map 店家網址或名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 美食口袋名單</h2>
+                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
+                        <input type="text" id="resto-url" placeholder="輸入店家名稱或網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="addRestaurant()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增美食口袋</button>
                     </div>
                     <div class="space-y-3 overflow-y-auto flex-1">
                         ${restaurants.map((item, index) => `
                             <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex justify-between items-center border">
-                                <div class="min-w-0 flex-1 mr-2">
-                                    <p class="text-xs font-bold truncate">🍴 ${item.name}</p>
-                                    <p class="text-[10px] ${cTextAccent} truncate mt-0.5">${item.url}</p>
-                                </div>
+                                <div class="min-w-0 flex-1 mr-2"><p class="text-xs font-bold truncate">🍴 ${item.name}</p></div>
                                 <div class="flex items-center space-x-1 shrink-0">
-                                    <a href="${item.url}" target="_blank" class="text-[10px] bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold shadow-sm">地圖</a>
                                     <button onclick="deleteRestaurant(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
                                 </div>
                             </div>
-                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">🍣 快把想吃的拉麵、壽司和小丑漢堡加進來吧！</div>`}
+                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">🍣 快把想吃的拉麵、壽司加進來吧！</div>`}
                     </div>
                 `;
-            } 
-            // 5. 雙人記帳本
-            else if (currentTab === 'expense') {
-                let mayTotal = 0;
-                let pingTotal = 0;
-
+            } else if (currentTab === 'expense') {
+                let mayTotal = 0, pingTotal = 0;
                 expenses.forEach(e => {
                     if (e.payer === 'May') mayTotal += Number(e.amount);
                     if (e.payer === '萍') pingTotal += Number(e.amount);
                 });
-
                 let diff = Math.abs(mayTotal - pingTotal) / 2;
                 let settlementText = "✨ 兩人目前花費已完全打平！";
-                
-                if (mayTotal > pingTotal) {
-                    settlementText = `💡 萍 要給 May ￥${diff} (一人份差額)`;
-                } else if (pingTotal > mayTotal) {
-                    settlementText = `💡 May 要給 萍 ￥${diff} (一人份差額)`;
-                }
+                if (mayTotal > pingTotal) settlementText = `💡 萍 要給 May ￥${diff} (一人份差額)`;
+                else if (pingTotal > mayTotal) settlementText = `💡 May 要給 萍 ￥${diff} (一人份差額)`;
 
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center ${cTextAccent}">💰 雙人旅遊記帳本</h2>
-                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-4 border space-y-2">
+                    <h2 class="text-lg font-bold mb-2 text-center shrink-0 ${cTextAccent}">💰 雙人旅遊記帳本</h2>
+                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
                         <div class="flex space-x-2">
                             <select id="exp-payer" class="p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                                 <option value="May">May 墊付</option>
@@ -421,28 +350,25 @@
                         <input type="number" id="exp-amount" placeholder="金額 (JPY 圓)" class="w-full p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="addExpense()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 記一筆</button>
                     </div>
-
-                    <div class="space-y-3 flex-1 overflow-y-auto mb-3">
-                        <div class="${cBg} p-3 rounded-2xl border">
-                            <h3 class="text-xs font-bold ${cTextAccent} mb-1.5 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayTotal}</span></h3>
-                            <div class="space-y-1 text-xs">
+                    <div class="space-y-2.5 flex-1 overflow-y-auto mb-2">
+                        <div class="${cBg} p-2.5 rounded-2xl border">
+                            <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayTotal}</span></h3>
+                            <div class="space-y-1 text-xs max-h-24 overflow-y-auto">
                                 ${expenses.filter(e => e.payer === 'May').map((e) => `
                                     <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
                                 `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
-
-                        <div class="${cBg} p-3 rounded-2xl border">
-                            <h3 class="text-xs font-bold ${cTextAccent} mb-1.5 flex justify-between"><span>🌸 萍 墊付總計</span><span>￥${pingTotal}</span></h3>
-                            <div class="space-y-1 text-xs">
+                        <div class="${cBg} p-2.5 rounded-2xl border">
+                            <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 萍 墊付總計</span><span>￥${pingTotal}</span></h3>
+                            <div class="space-y-1 text-xs max-h-24 overflow-y-auto">
                                 ${expenses.filter(e => e.payer === '萍').map((e) => `
                                     <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
                                 `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
                     </div>
-
-                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm text-center font-bold ${cTextAccent} border text-xs">
+                    <div class="${cBg} backdrop-blur-md p-2.5 rounded-2xl shadow-sm text-center font-bold ${cTextAccent} border text-xs shrink-0">
                         ${settlementText}
                     </div>
                 `;
@@ -451,13 +377,8 @@
 
         function addRestaurant() {
             const url = document.getElementById('resto-url').value;
-            if (!url) return alert('請輸入店家網址或名稱');
-            let name = url;
-            if(url.includes('http')) {
-                name = 'Google Map 推薦店家';
-            }
-            restaurants.push({ name, url });
-            document.getElementById('resto-url').value = '';
+            if (!url) return alert('請輸入店家名稱');
+            restaurants.push({ name: url, url });
             localStorage.setItem('restaurants', JSON.stringify(restaurants));
             render();
         }
@@ -467,7 +388,6 @@
             const name = document.getElementById('spot-url').value;
             if (!name) return alert('請輸入景點名稱');
             spots.push({ name });
-            document.getElementById('spot-url').value = '';
             localStorage.setItem('spots', JSON.stringify(spots));
             render();
         }
@@ -484,7 +404,6 @@
         }
         function deleteExpense(i) { expenses.splice(i, 1); localStorage.setItem('expenses', JSON.stringify(expenses)); render(); }
 
-        // 初始化執行
         render();
     </script>
 </body>
