@@ -31,28 +31,42 @@
             background: rgba(150, 150, 150, 0.3);
             border-radius: 9999px;
         }
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(2px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            font-size: 12px;
+            font-weight: bold;
+            color: #0284c7;
+        }
     </style>
 </head>
 <body id="body-theme" class="bg-sky-100 text-slate-700 flex flex-col items-center justify-center transition-colors duration-500">
 
-    <!-- 主容器 -->
     <div id="app-container" class="w-full h-full sm:max-w-md sm:h-[92vh] sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl overflow-hidden transition-colors duration-500">
         
-        <!-- 頂部標題列 -->
+        <div id="loading" class="loading-overlay hidden">☁️ 雲端同步中...</div>
+
         <header id="header-theme" class="bg-sky-300/85 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-30 shrink-0 transition-colors duration-500">
             <span id="header-tag" class="text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm">🌸 函館散策手帳</span>
-            <button onclick="cycleTheme()" id="theme-btn" class="text-xs font-bold bg-white/95 hover:bg-white px-3 py-1.5 rounded-full text-slate-600 shadow-sm transition-all flex items-center space-x-1 cursor-pointer">
-                <span id="theme-icon">☁️</span>
-                <span id="theme-text">青空風格</span>
-            </button>
+            <div class="flex items-center space-x-1.5">
+                <button onclick="fetchAllData()" class="text-xs bg-white/90 hover:bg-white px-2.5 py-1.5 rounded-full text-slate-600 shadow-sm transition-all cursor-pointer" title="重新整理同步">🔄</button>
+                <button onclick="cycleTheme()" id="theme-btn" class="text-xs font-bold bg-white/95 hover:bg-white px-3 py-1.5 rounded-full text-slate-600 shadow-sm transition-all flex items-center space-x-1 cursor-pointer">
+                    <span id="theme-icon">☁️</span>
+                    <span id="theme-text">青空風格</span>
+                </button>
+            </div>
         </header>
 
-        <!-- 內容主畫面區域 -->
         <div class="scroll-area p-4 flex flex-col">
             <div id="page-content" class="flex flex-col"></div>
         </div>
 
-        <!-- 底部導航列：無圓圈背景，僅以純淨小點標示當前頁面 -->
         <nav id="nav-theme" class="absolute bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 transition-colors duration-500" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
             <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center justify-center cursor-pointer p-1 w-1/5 relative">
                 <span class="text-base">🚆</span>
@@ -83,6 +97,8 @@
     </div>
 
     <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyAWUr_RJqNtHQ8PcDIIXHsWija5BBw7K_Q-yeiAwPSCIHUHrEMwYun_RXlTkTeLt6n/exec";
+
         let currentTab = 'itinerary';
         let currentDay = 1;
         let currentTheme = localStorage.getItem('hakodate_theme') || 'sky';
@@ -90,11 +106,55 @@
         let restaurants = [];
         let spots = [];
         let expenses = [];
-        try { restaurants = JSON.parse(localStorage.getItem('restaurants')) || []; } catch(e) { restaurants = []; }
-        try { spots = JSON.parse(localStorage.getItem('spots')) || []; } catch(e) { spots = []; }
-        try { expenses = JSON.parse(localStorage.getItem('expenses')) || []; } catch(e) { expenses = []; }
-
         let hotelRoom = localStorage.getItem('hotelRoom') || '';
+
+        function showLoading(show) {
+            const loader = document.getElementById('loading');
+            if(loader) {
+                if(show) loader.classList.remove('hidden');
+                else loader.classList.add('hidden');
+            }
+        }
+
+        // 從 Google 試算表雲端同步資料
+        async function fetchAllData() {
+            showLoading(true);
+            try {
+                let response = await fetch(`${API_URL}?action=getData`);
+                let data = await response.json();
+                spots = data.spots || [];
+                restaurants = data.restaurants || [];
+                expenses = data.expenses || [];
+            } catch(e) {
+                console.error("同步失敗", e);
+            }
+            showLoading(false);
+            render();
+        }
+
+        async function cloudAdd(sheet, payload) {
+            showLoading(true);
+            try {
+                let query = `?action=add&sheet=${sheet}&name=${encodeURIComponent(payload.name||'')}&url=${encodeURIComponent(payload.url||'')}&payer=${encodeURIComponent(payload.payer||'')}&amount=${payload.amount||''}`;
+                await fetch(API_URL + query);
+                await fetchAllData();
+            } catch(e) {
+                console.error("新增失敗", e);
+                showLoading(false);
+            }
+        }
+
+        async function cloudDelete(sheet, row) {
+            showLoading(true);
+            try {
+                let query = `?action=delete&sheet=${sheet}&row=${row}`;
+                await fetch(API_URL + query);
+                await fetchAllData();
+            } catch(e) {
+                console.error("刪除失敗", e);
+                showLoading(false);
+            }
+        }
 
         function cycleTheme() {
             if (currentTheme === 'sky') currentTheme = 'paper';
@@ -307,22 +367,22 @@
                 `;
             } else if (currentTab === 'spots') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點口袋名單</h2>
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 雲端同步景點清單</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
                         <input type="text" id="spot-name" placeholder="輸入景點名稱 (例：八幡坂)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <input type="text" id="spot-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <button onclick="addSpot()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增景點口袋</button>
+                        <button onclick="handleSpotAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增景點至雲端</button>
                     </div>
                     <div class="space-y-3">
-                        ${spots.map((item, index) => `
+                        ${spots.map((item) => `
                             <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center justify-between border">
                                 <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
                                     <div class="w-9 h-9 ${cSubBg} rounded-xl flex items-center justify-center text-sm shrink-0 border">📍</div>
-                                    <p class="font-bold text-xs truncate">${item.name}</p>
+                                    <p class="font-bold text-xs truncate">${item.col1}</p>
                                 </div>
                                 <div class="flex items-center space-x-1 shrink-0">
-                                    ${item.url ? `<a href="${item.url}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">地圖</a>` : ''}
-                                    <button onclick="deleteSpot(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
+                                    ${item.col2 ? `<a href="${item.col2}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">地圖</a>` : ''}
+                                    <button onclick="cloudDelete('spots', ${item.row})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
                                 </div>
                             </div>
                         `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點與地圖吧！</div>`}
@@ -330,22 +390,22 @@
                 `;
             } else if (currentTab === 'restaurant') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 美食口袋名單</h2>
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 雲端同步美食清單</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
                         <input type="text" id="resto-name" placeholder="輸入店家名稱 (例：幸運小丑漢堡)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <input type="text" id="resto-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <button onclick="addRestaurant()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增美食口袋</button>
+                        <button onclick="handleRestoAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增美食至雲端</button>
                     </div>
                     <div class="space-y-3">
-                        ${restaurants.map((item, index) => `
+                        ${restaurants.map((item) => `
                             <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center justify-between border">
                                 <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
                                     <div class="w-9 h-9 ${cSubBg} rounded-xl flex items-center justify-center text-sm shrink-0 border">🍴</div>
-                                    <p class="font-bold text-xs truncate">${item.name}</p>
+                                    <p class="font-bold text-xs truncate">${item.col1}</p>
                                 </div>
                                 <div class="flex items-center space-x-1 shrink-0">
-                                    ${item.url ? `<a href="${item.url}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">地圖</a>` : ''}
-                                    <button onclick="deleteRestaurant(${index})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
+                                    ${item.col2 ? `<a href="${item.col2}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">地圖</a>` : ''}
+                                    <button onclick="cloudDelete('restaurants', ${item.row})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
                                 </div>
                             </div>
                         `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">🍣 快把想吃的拉麵、壽司與地圖加進來吧！</div>`}
@@ -354,8 +414,8 @@
             } else if (currentTab === 'expense') {
                 let mayTotal = 0, pingTotal = 0;
                 expenses.forEach(e => {
-                    if (e.payer === 'May') mayTotal += Number(e.amount);
-                    if (e.payer === '萍') pingTotal += Number(e.amount);
+                    if (e.col1 === 'May') mayTotal += Number(e.col3);
+                    if (e.col1 === '萍') pingTotal += Number(e.col3);
                 });
                 let diff = Math.abs(mayTotal - pingTotal) / 2;
                 let settlementText = "✨ 兩人目前花費已完全打平！";
@@ -363,7 +423,7 @@
                 else if (pingTotal > mayTotal) settlementText = `💡 May 要給 萍 ￥${diff} (一人份差額)`;
 
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-2 text-center shrink-0 ${cTextAccent}">💰 雙人旅遊記帳本</h2>
+                    <h2 class="text-lg font-bold mb-2 text-center shrink-0 ${cTextAccent}">💰 雙人雲端記帳本</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
                         <div class="flex space-x-2">
                             <select id="exp-payer" class="p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
@@ -373,22 +433,22 @@
                             <input type="text" id="exp-name" placeholder="消費品項/店名" class="flex-1 p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         </div>
                         <input type="number" id="exp-amount" placeholder="金額 (JPY 圓)" class="w-full p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <button onclick="addExpense()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 記一筆</button>
+                        <button onclick="handleExpAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 記一筆到雲端</button>
                     </div>
                     <div class="space-y-2.5 mb-2">
                         <div class="${cBg} p-2.5 rounded-2xl border">
                             <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayTotal}</span></h3>
                             <div class="space-y-1 text-xs">
-                                ${expenses.filter(e => e.payer === 'May').map((e) => `
-                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
+                                ${expenses.filter(e => e.col1 === 'May').map((e) => `
+                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.col2}</span><span>￥${e.col3} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
                                 `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
                         <div class="${cBg} p-2.5 rounded-2xl border">
                             <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 萍 墊付總計</span><span>￥${pingTotal}</span></h3>
                             <div class="space-y-1 text-xs">
-                                ${expenses.filter(e => e.payer === '萍').map((e) => `
-                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="deleteExpense(${expenses.indexOf(e)})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
+                                ${expenses.filter(e => e.col1 === '萍').map((e) => `
+                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.col2}</span><span>￥${e.col3} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
                                 `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
@@ -400,38 +460,30 @@
             }
         }
 
-        function addRestaurant() {
-            const name = document.getElementById('resto-name').value;
-            const url = document.getElementById('resto-url').value;
-            if (!name) return alert('請輸入店家名稱');
-            restaurants.push({ name, url });
-            localStorage.setItem('restaurants', JSON.stringify(restaurants));
-            render();
-        }
-        function deleteRestaurant(i) { restaurants.splice(i, 1); localStorage.setItem('restaurants', JSON.stringify(restaurants)); render(); }
-
-        function addSpot() {
+        function handleSpotAdd() {
             const name = document.getElementById('spot-name').value;
             const url = document.getElementById('spot-url').value;
             if (!name) return alert('請輸入景點名稱');
-            spots.push({ name, url });
-            localStorage.setItem('spots', JSON.stringify(spots));
-            render();
+            cloudAdd('spots', { name, url });
         }
-        function deleteSpot(i) { spots.splice(i, 1); localStorage.setItem('spots', JSON.stringify(spots)); render(); }
 
-        function addExpense() {
+        function handleRestoAdd() {
+            const name = document.getElementById('resto-name').value;
+            const url = document.getElementById('resto-url').value;
+            if (!name) return alert('請輸入店家名稱');
+            cloudAdd('restaurants', { name, url });
+        }
+
+        function handleExpAdd() {
             const payer = document.getElementById('exp-payer').value;
             const name = document.getElementById('exp-name').value;
             const amount = document.getElementById('exp-amount').value;
             if (!name || !amount) return alert('請完整填寫項目與金額');
-            expenses.push({ payer, name, amount: Number(amount) });
-            localStorage.setItem('expenses', JSON.stringify(expenses));
-            render();
+            cloudAdd('expenses', { payer, name, amount });
         }
-        function deleteExpense(i) { expenses.splice(i, 1); localStorage.setItem('expenses', JSON.stringify(expenses)); render(); }
 
-        render();
+        // 初始化載入雲端資料
+        fetchAllData();
     </script>
 </body>
 </html>
