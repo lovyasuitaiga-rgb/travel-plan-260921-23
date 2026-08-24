@@ -276,17 +276,17 @@
                             </div>
                             <div class="space-y-3 pl-1">
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
-                                    <p class="font-bold ${cTextAccent}">⏰ 08:00 – 10:00 ｜ 函館朝市吃海鮮</p>
+                                    <p class="font-bold ${cTextAccent}">⏰ 07:00 – 9:00 ｜ 函館朝市吃海鮮</p>
                                     <p class="mt-1">➔ 搭市電至函館站前，品嚐豪華海鮮丼、體驗釣活烏賊與烤帝王蟹腳！</p>
                                 </div>
                                 <div class="flex justify-center opacity-70">⬇️ 步行/市電至末廣町</div>
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
-                                    <p class="font-bold ${cTextAccent}">⏰ 10:30 – 15:30 ｜ 元町異國街區 & 金森紅磚倉庫</p>
+                                    <p class="font-bold ${cTextAccent}">⏰ 9:30 – 14:30 ｜ 元町異國街區 & 金森紅磚倉庫</p>
                                     <p class="mt-1">➔ 漫步斜坡 <strong>八幡坂</strong>、參訪浪漫教會群。<br>➔ 走到海邊紅磚倉庫，品嚐 <strong>Snaffle’s</strong> 現做起司蛋糕與下午茶。</p>
                                 </div>
                                 <div class="flex justify-center opacity-70">⬇️ 市電至湯之川</div>
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
-                                    <p class="font-bold ${cTextAccent}">⏰ 16:00 – 20:00 ｜ 湯之川溫泉區與晚餐</p>
+                                    <p class="font-bold ${cTextAccent}">⏰ 15:00 – 20:00 ｜ 湯之川溫泉區與晚餐</p>
                                     <p class="mt-1">➔ 造訪熱帶植物園看可愛猴子泡溫泉、足湯放鬆。<br>➔ 晚餐享用阿佐利壽喜燒或倉庫區海鮮料理。</p>
                                 </div>
                             </div>
@@ -299,7 +299,7 @@
                             <div class="space-y-3 pl-1">
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
                                     <p class="font-bold ${cTextAccent}">⏰ 09:00 – 11:30 ｜ 天使の聖母トラピスチヌ修道院</p>
-                                    <p class="mt-1">➔ 寄放行李後搭公車前往修道院，欣賞歐風庭園建築，必吃「市民の森」超濃霜淇淋！</p>
+                                    <p class="mt-1">➔ 寄放行李後搭公車前往修道院，欣賞歐風庭園建築，吃「市民の森」超濃霜淇淋！</p>
                                 </div>
                                 <div class="flex justify-center opacity-70">⬇️ 返回 JR 函館站</div>
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
@@ -308,7 +308,7 @@
                                 </div>
                                 <div class="flex justify-center opacity-70">⬇️ 新幹線返回東京</div>
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
-                                    <p class="font-bold ${cTextAccent}">⏰ 17:26 – 21:23 ｜ 甜蜜回程</p>
+                                    <p class="font-bold ${cTextAccent}">⏰ 17:26 – 21:23 ｜ 回程</p>
                                     <p class="mt-1">➔ 搭乘 <strong>はやぶさ 40号</strong> (8號車 07DE) 舒適返回東京車站。</p>
                                 </div>
                             </div>
@@ -317,7 +317,7 @@
                 `;
             } else if (currentTab === 'traffic') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">📚 交通與住宿完整指南</h2>
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🚆 交通與住宿完整指南</h2>
                     <div class="space-y-3 text-xs">
                         <div class="${cBg} backdrop-blur-md p-3.5 rounded-2xl shadow-sm border space-y-2">
                             <div class="flex items-center space-x-2">
@@ -371,7 +371,7 @@
                     <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點清單</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
                         <input type="text" id="spot-name" placeholder="輸入景點名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <input type="text" id="spot-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="spot-url" placeholder="貼上 Google Map 網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="handleSpotAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至景點口袋</button>
                     </div>
                     <div class="space-y-3">
@@ -391,10 +391,10 @@
                 `;
             } else if (currentTab === 'restaurant') {
                 content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 美食清單</h2>
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🍣 美食清單 🍔</h2>
                     <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
                         <input type="text" id="resto-name" placeholder="輸入店家名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <input type="text" id="resto-url" placeholder="貼上 Google Map 網址 (選填)" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="resto-url" placeholder="貼上 Google Map 網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="handleRestoAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至美食口袋</button>
                     </div>
                     <div class="space-y-3">
