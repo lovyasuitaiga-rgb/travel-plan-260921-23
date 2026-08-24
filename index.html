@@ -2,8 +2,8 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>✨ 函館悠閒三日遊 ✨</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>✨ 我們的函館悠閒三日遊 ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -18,6 +18,9 @@
             -webkit-user-select: none;
             -webkit-overflow-scrolling: touch;
         }
+        .pb-safe-nav {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -27,9 +30,9 @@
         }
     </style>
 </head>
-<body id="body-theme" class="bg-sky-100 text-slate-700 flex flex-col items-center transition-colors duration-500 pb-24">
+<body id="body-theme" class="bg-sky-100 text-slate-700 flex flex-col items-center transition-colors duration-500 pb-28">
 
-    <div id="app-container" class="w-full min-h-screen sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden">
+    <div id="app-container" class="w-full min-h-[100dvh] sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500">
         
         <!-- 頂部裝飾標題列 -->
         <header id="header-theme" class="sticky top-0 bg-sky-300/80 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500">
@@ -41,12 +44,12 @@
         </header>
 
         <!-- 內容主畫面區域 -->
-        <main class="flex-1 p-4 pb-28 flex flex-col z-10">
+        <main class="flex-1 p-4 pb-32 flex flex-col z-10">
             <div id="page-content" class="flex flex-col"></div>
         </main>
 
         <!-- 底部五項功能導航列 -->
-        <nav id="nav-theme" class="fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe">
+        <nav id="nav-theme" class="fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe-nav">
             <div onclick="switchTab('traffic')" class="nav-item flex flex-col items-center cursor-pointer relative group p-1">
                 <div class="icon-bg w-10 h-10 flex items-center justify-center text-lg transition-all rounded-2xl">🚆</div>
                 <span class="nav-label text-[10px] font-bold text-slate-500 mt-0.5">交通飯店</span>
@@ -102,28 +105,28 @@
             const themeText = document.getElementById('theme-text');
 
             if (currentTheme === 'sky') {
-                body.className = "bg-sky-100 text-slate-700 flex flex-col items-center transition-colors duration-500 pb-24";
-                container.className = "w-full min-h-screen sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden";
+                body.className = "bg-sky-100 text-slate-700 flex flex-col items-center transition-colors duration-500 pb-28";
+                container.className = "w-full min-h-[100dvh] sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-white bg-sky-50 flex flex-col relative shadow-2xl transition-colors duration-500";
                 header.className = "sticky top-0 bg-sky-300/80 backdrop-blur-md px-4 py-3 text-center border-b border-white/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-white/85 px-2.5 py-1 rounded-full text-sky-600 shadow-sm";
                 headerTag.innerText = "🌸 函館散策手帳";
-                nav.className = "fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
+                nav.className = "fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-white/95 backdrop-blur-md border-t border-sky-100 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe-nav";
                 themeIcon.innerText = "☁️"; themeText.innerText = "青空風格";
             } else if (currentTheme === 'paper') {
-                body.className = "bg-amber-100/70 text-amber-950 flex flex-col items-center transition-colors duration-500 pb-24";
-                container.className = "w-full min-h-screen sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-amber-200 bg-[#fbfbde] flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden";
+                body.className = "bg-amber-100/70 text-amber-950 flex flex-col items-center transition-colors duration-500 pb-28";
+                container.className = "w-full min-h-[100dvh] sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-amber-200 bg-[#fbfbde] flex flex-col relative shadow-2xl transition-colors duration-500";
                 header.className = "sticky top-0 bg-amber-200/90 backdrop-blur-md px-4 py-3 text-center border-b border-amber-300/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-amber-100 px-2.5 py-1 rounded-full text-amber-800 shadow-sm";
                 headerTag.innerText = "📜 復古筆記手帳";
-                nav.className = "fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-[#fefce8]/95 backdrop-blur-md border-t border-amber-200 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
+                nav.className = "fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-[#fefce8]/95 backdrop-blur-md border-t border-amber-200 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe-nav";
                 themeIcon.innerText = "📜"; themeText.innerText = "紙質筆記";
             } else if (currentTheme === 'night') {
-                body.className = "bg-slate-950 text-slate-100 flex flex-col items-center transition-colors duration-500 pb-24";
-                container.className = "w-full min-h-screen sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-slate-700 bg-slate-900 flex flex-col relative shadow-2xl transition-colors duration-500 overflow-hidden";
+                body.className = "bg-slate-950 text-slate-100 flex flex-col items-center transition-colors duration-500 pb-28";
+                container.className = "w-full min-h-[100dvh] sm:max-w-md sm:min-h-[92dvh] sm:my-4 sm:rounded-3xl sm:border-4 sm:border-slate-700 bg-slate-900 flex flex-col relative shadow-2xl transition-colors duration-500";
                 header.className = "sticky top-0 bg-indigo-950/90 backdrop-blur-md px-4 py-3 text-center border-b border-indigo-900/60 flex items-center justify-between z-35 shrink-0 transition-colors duration-500";
                 headerTag.className = "text-xs font-bold bg-indigo-900/80 px-2.5 py-1 rounded-full text-indigo-200 shadow-sm";
                 headerTag.innerText = "🌌 函館山百萬夜景";
-                nav.className = "fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-slate-900/95 backdrop-blur-md border-t border-indigo-900 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500";
+                nav.className = "fixed sm:absolute bottom-0 left-0 right-0 h-18 bg-slate-900/95 backdrop-blur-md border-t border-indigo-900 flex justify-around items-center px-2 z-40 shadow-lg shrink-0 transition-colors duration-500 pb-safe-nav";
                 themeIcon.innerText = "🌌"; themeText.innerText = "夜景觀星";
             }
         }
@@ -414,7 +417,7 @@
         function deleteSpot(i) { spots.splice(i, 1); localStorage.setItem('spots', JSON.stringify(spots)); render(); }
 
         function addExpense() {
-            const payer = document.getElementById('exp-payer').value;
+            const payer = document.getElementById('exp-payer',).value;
             const name = document.getElementById('exp-name').value;
             const amount = document.getElementById('exp-amount').value;
             if (!name || !amount) return alert('請完整填寫項目與金額');
