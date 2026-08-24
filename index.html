@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>✨ 函館悠閒三日遊 ✨</title>
+    <title>✨ 我們的函館悠閒三日遊 ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -82,9 +82,23 @@
         let currentTab = 'itinerary';
         let currentDay = 1;
         let currentTheme = localStorage.getItem('hakodate_theme') || 'sky';
-        let restaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
-        let spots = JSON.parse(localStorage.getItem('spots')) || [];
-        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        
+        // 安全載入現有資料，若無則為空陣列
+        let restaurants = [];
+        let spots = [];
+        let expenses = [];
+        try {
+            restaurants = JSON.parse(localStorage.getItem('restaurants')) || [];
+        } catch(e) { restaurants = []; }
+        
+        try {
+            spots = JSON.parse(localStorage.getItem('spots')) || [];
+        } catch(e) { spots = []; }
+        
+        try {
+            expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+        } catch(e) { expenses = []; }
+
         let hotelRoom = localStorage.getItem('hotelRoom') || '';
 
         function cycleTheme() {
@@ -417,7 +431,7 @@
         function deleteSpot(i) { spots.splice(i, 1); localStorage.setItem('spots', JSON.stringify(spots)); render(); }
 
         function addExpense() {
-            const payer = document.getElementById('exp-payer',).value;
+            const payer = document.getElementById('exp-payer').value;
             const name = document.getElementById('exp-name').value;
             const amount = document.getElementById('exp-amount').value;
             if (!name || !amount) return alert('請完整填寫項目與金額');
