@@ -387,6 +387,8 @@
             </p>
         </div>
 
+<!-- 放在所有清單內容的最底部 -->
+<div class="h-28 w-full pointer-events-none" aria-hidden="true"></div>
 
     </div>
 </div>
@@ -417,6 +419,9 @@
                             </div>
                         `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點與地圖吧！</div>`}
                     </div>
+                    <!-- 放在所有清單內容的最底部 -->
+<div class="h-28 w-full pointer-events-none" aria-hidden="true"></div>
+
                 `;
             } else if (currentTab === 'restaurant') {
                 content.innerHTML = `
@@ -440,6 +445,10 @@
                             </div>
                         `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">🍣 快把想吃的拉麵、壽司與地圖加進來吧！</div>`}
                     </div>
+                    <!-- 放在所有清單內容的最底部 -->
+<div class="h-28 w-full pointer-events-none" aria-hidden="true"></div>
+
+
                 `;
             } else if (currentTab === 'expense') {
                 let mayTotal = 0, pingTotal = 0;
