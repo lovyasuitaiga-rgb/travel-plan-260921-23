@@ -206,7 +206,6 @@
         function switchDay(day) { currentDay = day; render(); }
         function saveRoom(val) { hotelRoom = val; localStorage.setItem('hotelRoom', val); }
 
-        // 切換自訂分帳區塊
         function toggleCustomSplit() {
             const isCustom = document.getElementById('customSplitToggle').checked;
             const customFields = document.getElementById('customSplitFields');
@@ -274,7 +273,7 @@
                         <button onclick="switchDay(2)" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${currentDay === 2 ? dayBtnActive : dayBtnNormal}">Day 2 🏮</button>
                         <button onclick="switchDay(3)" class="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${currentDay === 3 ? dayBtnActive : dayBtnNormal}">Day 3 🍦</button>
                     </div>
-                    <div class="${cBg} backdrop-blur-md p-4 rounded-3xl shadow-sm border space-y-3 text-xs leading-relaxed">
+                    <div class="${cBg} backdrop-blur-md p-4 rounded-3xl shadow-sm border space-y-3 text-xs leading-relaxed mb-20">
                         ${currentDay === 1 ? `
                             <div class="flex items-center space-x-2 font-bold text-sm ${cTextAccent} pb-2 border-b">
                                 <span class="${cSubBg} p-1.5 rounded-xl border">🚄</span>
@@ -293,7 +292,7 @@
                                 <div class="flex justify-center opacity-70">⬇️ 市電至十字街站</div>
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
                                     <p class="font-bold ${cTextAccent}">⏰ 17:00 – 21:00 ｜ 世界級函館山夜景 & 晚餐</p>
-                                    <p class="mt-1">➔ 提早 30 分鐘搭纜車上山卡位賞百萬夜景。
+                                    <p class="mt-1">➔ 提早 30 分鐘搭纜車上山卡位賞百萬夜景。</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -343,12 +342,12 @@
                         ` : ''}
                     </div>
                 `;
-                      } else if (currentTab === 'traffic') {
+            } else if (currentTab === 'traffic') {
                 content.innerHTML = `
                     <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🚆 交通與住宿完整指南</h2>
                     <div class="space-y-3 text-xs mb-20">
                         
-                        <!-- 飯店基本資訊與靜態房號欄位（直接在下方雙引號內填入房號） -->
+                        <!-- 飯店基本資訊與靜態房號欄位 -->
                         <div class="${cBg} backdrop-blur-md p-3.5 rounded-2xl shadow-sm border space-y-2">
                             <div class="flex items-center space-x-2">
                                 <span class="text-lg">🏨</span>
@@ -364,7 +363,6 @@
                             <div class="text-[11px] space-y-1.5 pt-1 border-t">
                                 <p>📍 <strong>地址：</strong>北海道函館市本町26-17 <a href="https://maps.google.com/?q=北海道函館市本町26-17" target="_blank" class="${cTextAccent} underline font-bold">[地圖]</a></p>
                                 <p>🚇 <strong>交通：</strong>JR函館站搭市電 15 分鐘至「五稜郭公園前」站，下車步行 1 分鐘</p>
-                                <!-- 房號靜態顯示區（抵達後直接來 GitHub 修改這裡的數字即可） -->
                                 <p class="pt-1.5 border-t font-bold ${cTextAccent}">🔑 房號： 尚未填寫 室</p>
                             </div>
                         </div>
@@ -390,9 +388,9 @@
                                     <p class="leading-relaxed">
                                         • <strong>運行班距：</strong>約每 10 至 15 分鐘一班（人潮多時會加密班次）。<br>
                                         • ⏰ <strong>營業時間：</strong>
-                                          <br>　- 春夏季（約 4 月中旬～10月中下旬）：10:00～22:00（上行最終 21:50 / 下行最終 22:00）
-                                          <br>　- 秋冬季節（約 10 月下旬～4月中旬）：10:00～21:00（上行最終 20:50 / 下行最終 21:00）
-                                          <br>　• 💡 <strong>小貼士：</strong>單程約 3 分鐘。上山前記得先查看山上即時天候與能見度，避免起霧影響百萬夜景視野！
+                                          <br> - 春夏季（約 4 月中旬～10月中下旬）：10:00～22:00（上行最終 21:50 / 下行最終 22:00）
+                                          <br> - 秋冬季節（約 10 月下旬～4月中旬）：10:00～21:00（上行最終 20:50 / 下行最終 21:00）
+                                          <br> • 💡 <strong>小貼士：</strong>單程約 3 分鐘。上山前記得先查看山上即時天候與能見度，避免起霧影響百萬夜景視野！
                                     </p>
                                 </div>
                             </div>
@@ -416,8 +414,6 @@
                         </div>
                     </div>
                 `;
-
-                `;
             } else if (currentTab === 'spots') {
                 content.innerHTML = `
                     <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點清單</h2>
@@ -426,7 +422,7 @@
                         <input type="text" id="spot-url" placeholder="貼上 Google Map 網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="handleSpotAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至景點口袋</button>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3 mb-20">
                         ${spots.map((item) => `
                             <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center justify-between border">
                                 <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
@@ -449,7 +445,7 @@
                         <input type="text" id="resto-url" placeholder="貼上 Google Map 網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         <button onclick="handleRestoAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至美食口袋</button>
                     </div>
-                    <div class="space-y-3">
+                    <div class="space-y-3 mb-20">
                         ${restaurants.map((item) => `
                             <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center justify-between border">
                                 <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
@@ -472,11 +468,9 @@
                     let amt = parseFloat(e.amount) || 0;
                     let payer = e.payer;
                     
-                    // 計算墊付金額
                     if (payer === 'May') mayPaid += amt;
                     if (payer === '萍') pingPaid += amt;
 
-                    // 🌸 讀取後端回傳的新欄位（mayShare / pingShare），若沒填則預設對半分
                     let mayShare = (e.mayShare !== undefined && e.mayShare !== '') ? parseFloat(e.mayShare) : (amt / 2);
                     let pingShare = (e.pingShare !== undefined && e.pingShare !== '') ? parseFloat(e.pingShare) : (amt / 2);
 
@@ -506,13 +500,11 @@
                         </div>
                         <input type="number" id="exp-amount" placeholder="總金額 (JPY 圓)" class="w-full p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none" oninput="handleAmountInput()">
 
-                        <!-- 💡 自訂分帳開關 -->
                         <div class="flex items-center space-x-2 pt-1">
                             <input type="checkbox" id="customSplitToggle" onchange="toggleCustomSplit()" class="rounded border-gray-300">
                             <label for="customSplitToggle" class="text-xs text-gray-600 cursor-pointer">自訂兩人分攤金額（不勾選則預設平分）</label>
                         </div>
 
-                        <!-- 💡 自訂金額輸入區（預設隱藏） -->
                         <div id="customSplitFields" class="hidden grid grid-cols-2 gap-2 pt-1">
                             <div>
                                 <label class="text-[10px] text-gray-500">May 應付</label>
@@ -526,8 +518,8 @@
 
                         <button onclick="handleExpAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">我付了錢💸</button>
                     </div>
-                    <div class="space-y-2.5 mb-2">
-                                              <div class="${cBg} p-2.5 rounded-2xl border">
+                    <div class="space-y-2.5 mb-20">
+                        <div class="${cBg} p-2.5 rounded-2xl border">
                             <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayPaid}</span></h3>
                             <div class="space-y-1.5 text-xs">
                                 ${expenses.filter(e => e.payer === 'May').map((e) => {
@@ -567,9 +559,9 @@
                                 }).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
-                    </div>
-                    <div class="${cBg} backdrop-blur-md p-2.5 rounded-2xl shadow-sm text-center font-bold ${cTextAccent} border text-xs shrink-0">
-                        ${settlementText}
+                        <div class="${cBg} backdrop-blur-md p-2.5 rounded-2xl shadow-sm text-center font-bold ${cTextAccent} border text-xs shrink-0">
+                            ${settlementText}
+                        </div>
                     </div>
                 `;
             }
