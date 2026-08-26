@@ -490,20 +490,44 @@
                         <button onclick="handleExpAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">我付了錢💸</button>
                     </div>
                     <div class="space-y-2.5 mb-2">
-                        <div class="${cBg} p-2.5 rounded-2xl border">
+                                              <div class="${cBg} p-2.5 rounded-2xl border">
                             <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayPaid}</span></h3>
-                            <div class="space-y-1 text-xs">
-                                ${expenses.filter(e => e.payer === 'May').map((e) => `
-                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
-                                `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
+                            <div class="space-y-1.5 text-xs">
+                                ${expenses.filter(e => e.payer === 'May').map((e) => {
+                                    let mShare = (e.mayShare !== undefined && e.mayShare !== '') ? e.mayShare : (e.amount / 2);
+                                    let pShare = (e.pingShare !== undefined && e.pingShare !== '') ? e.pingShare : (e.amount / 2);
+                                    return `
+                                        <div class="${cSubBg} px-2.5 py-1.5 rounded-xl border space-y-0.5">
+                                            <div class="flex justify-between font-bold">
+                                                <span>${e.name}</span>
+                                                <span>￥${e.amount} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span>
+                                            </div>
+                                            <div class="text-[10px] opacity-75 flex justify-between">
+                                                <span>分攤：May ￥${mShare} / 萍 ￥${pShare}</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
                         <div class="${cBg} p-2.5 rounded-2xl border">
                             <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 萍 墊付總計</span><span>￥${pingPaid}</span></h3>
-                            <div class="space-y-1 text-xs">
-                                ${expenses.filter(e => e.payer === '萍').map((e) => `
-                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
-                                `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
+                            <div class="space-y-1.5 text-xs">
+                                ${expenses.filter(e => e.payer === '萍').map((e) => {
+                                    let mShare = (e.mayShare !== undefined && e.mayShare !== '') ? e.mayShare : (e.amount / 2);
+                                    let pShare = (e.pingShare !== undefined && e.pingShare !== '') ? e.pingShare : (e.amount / 2);
+                                    return `
+                                        <div class="${cSubBg} px-2.5 py-1.5 rounded-xl border space-y-0.5">
+                                            <div class="flex justify-between font-bold">
+                                                <span>${e.name}</span>
+                                                <span>￥${e.amount} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span>
+                                            </div>
+                                            <div class="text-[10px] opacity-75 flex justify-between">
+                                                <span>分攤：May ￥${mShare} / 萍 ￥${pShare}</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
                     </div>
