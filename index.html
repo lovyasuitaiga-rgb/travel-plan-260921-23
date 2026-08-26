@@ -136,7 +136,7 @@
         async function cloudAdd(sheet, payload) {
             showLoading(true);
             try {
-                let query = `?action=add&sheet=${sheet}&name=${encodeURIComponent(payload.name||'')}&url=${encodeURIComponent(payload.url||'')}&payer=${encodeURIComponent(payload.payer||'')}&amount=${payload.amount||''}`;
+                let query = `?action=add&sheet=${sheet}&name=${encodeURIComponent(payload.name||'')}&url=${encodeURIComponent(payload.url||'')}&payer=${encodeURIComponent(payload.payer||'')}&amount=${payload.amount||''}&mayShare=${encodeURIComponent(payload.mayShare||'')}&pingShare=${encodeURIComponent(payload.pingShare||'')}`;
                 await fetch(API_URL + query);
                 await fetchAllData();
             } catch(e) {
@@ -205,6 +205,34 @@
         function switchTab(tab) { currentTab = tab; render(); window.scrollTo(0, 0); }
         function switchDay(day) { currentDay = day; render(); }
         function saveRoom(val) { hotelRoom = val; localStorage.setItem('hotelRoom', val); }
+
+        // 切換自訂分帳區塊
+        function toggleCustomSplit() {
+            const isCustom = document.getElementById('customSplitToggle').checked;
+            const customFields = document.getElementById('customSplitFields');
+            if (isCustom) {
+                customFields.classList.remove('hidden');
+                autoFillHalf();
+            } else {
+                customFields.classList.add('hidden');
+                document.getElementById('exp-may-share').value = '';
+                document.getElementById('exp-ping-share').value = '';
+            }
+        }
+
+        function handleAmountInput() {
+            const isCustom = document.getElementById('customSplitToggle')?.checked;
+            if (isCustom) {
+                autoFillHalf();
+            }
+        }
+
+        function autoFillHalf() {
+            const totalAmount = parseFloat(document.getElementById('exp-amount').value) || 0;
+            const half = Math.round(totalAmount / 2);
+            document.getElementById('exp-may-share').value = half;
+            document.getElementById('exp-ping-share').value = half;
+        }
 
         function render() {
             applyTheme();
@@ -309,7 +337,7 @@
                                 <div class="flex justify-center opacity-70">⬇️ 新幹線返回東京</div>
                                 <div class="${cSubBg} p-2.5 rounded-2xl border">
                                     <p class="font-bold ${cTextAccent}">⏰ 17:26 – 21:23 ｜ 回程</p>
-                                    <p class="mt-1">➔ 搭乘 <strong>はやぶさ 40号</strong> ) 舒適返回東京車站。</p>
+                                    <p class="mt-1">➔ 搭乘 <strong>はやぶさ 40号</strong> 舒適返回東京車站。</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -335,10 +363,6 @@
                                 <p>📍 <strong>地址：</strong>北海道函館市本町26-17 <a href="https://maps.google.com/?q=北海道函館市本町26-17" target="_blank" class="${cTextAccent} underline font-bold">[地圖]</a></p>
                                 <p>🚇 <strong>交通：</strong>JR函館站搭市電 15 分鐘至「五稜郭公園前」站，下車步行 1 分鐘</p>
                             </div>
-                            <div class="flex items-center space-x-2 pt-2 border-t">
-    <span class="font-bold ${cTextAccent}">🔑 我的房間號碼：</span>
-    <span class="text-xs font-bold px-2 py-1"> 室</span>
-</div>
                         </div>
                         <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm border space-y-1.5">
                             <p class="font-bold text-xs ${cTextAccent} flex items-center"><span class="mr-1.5">🚄</span> 新幹線指定席資訊</p>
@@ -353,47 +377,6 @@
                                     <p class="mt-0.5">17:26 新函館北斗 ➔ 21:23 東京</p>
                                     <p class="${cTextAccent} font-bold mt-1">座位：8號車 07DE</p>
                                 </div>
-                            </div>
-                        </div>
-                     <div class="${cBg} backdrop-blur-md p-3.5 rounded-2xl shadow-sm border space-y-2.5">
-    <p class="font-bold text-xs ${cTextAccent} flex items-center"><span class="mr-1.5">🚊</span> 當地市電與重要交通導覽</p>
-    <div class="space-y-2 text-[11px]">
-        
-        <!-- 函館市電 -->
-        <div class="${cSubBg} p-2 rounded-xl border">
-            <p class="font-bold ${cTextAccent} mb-0.5">🚋 函館市電（路面電車）</p>
-            <p class="leading-relaxed">• <strong>運行班距：</strong>約 6 至 10 分鐘一班。<br>• 🎫 推薦購買 <a href="https://www.city.hakodate.hokkaido.jp/docs/2014012100977/" target="_blank" class="${cTextAccent} underline font-bold">函館市電一日乘車券</a>最划算！</p>
-        </div>
-
-        <!-- 前往特拉普派修道院的巴士 -->
-        <div class="${cSubBg} p-2 rounded-xl border">
-            <p class="font-bold ${cTextAccent} mb-0.5">🚌 五稜郭／市區前往修道院交通</p>
-            <p class="leading-relaxed">
-                • <strong>主要公車號：</strong>可搭乘函館巴士 <strong>66系統</strong>、<strong>12系統</strong> 或 <strong>99系統</strong>。<br>
-                • <strong>搭乘站點：</strong>從「五稜郭公園入口」或「五稜郭」站上車，至<strong>🔊「トラピスチヌ入口（修道院入口）」</strong>下車步行約 5-10 分鐘。<br>
-                • ⚠️ <strong>注意：</strong>地方巴士班次間隔較長，建議出發前務必先查詢當下發車時刻！
-            </p>
-        </div>
-
-             <!-- 函館山纜車 -->
-        <div class="${cSubBg} p-2 rounded-xl border">
-            <p class="font-bold ${cTextAccent} mb-0.5">🚠 函館山纜車</p>
-            <p class="leading-relaxed">
-                • <strong>運行班距：</strong>約每 10 至 15 分鐘一班（人潮多時會加密班次）。<br>
-                • ⏰ <strong>營業時間：</strong>
-                  <br>　- 春夏季（約 4 月中旬～10月中下旬）：10:00～22:00（上行最終 21:50 / 下行最終 22:00）
-                  <br>　- 秋冬季節（約 10 月下旬～4月中旬）：10:00～21:00（上行最終 20:50 / 下行最終 21:00）<br>
-                • 💡 <strong>小貼士：</strong>單程約 3 分鐘。上山前記得先查看山上即時天候與能見度，避免起霧影響百萬夜景視野！
-            </p>
-        </div>
-
-
-
-    </div>
-</div>
-<!-- 放在所有清單內容的最底部 -->
-<div class="h-28 w-full pointer-events-none" aria-hidden="true"></div>
-
                             </div>
                         </div>
                     </div>
@@ -420,9 +403,6 @@
                             </div>
                         `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點與地圖吧！</div>`}
                     </div>
-                    <!-- 放在所有清單內容的最底部 -->
-<div class="h-28 w-full pointer-events-none" aria-hidden="true"></div>
-
                 `;
             } else if (currentTab === 'restaurant') {
                 content.innerHTML = `
@@ -446,21 +426,36 @@
                             </div>
                         `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">🍣 快把想吃的拉麵、壽司與地圖加進來吧！</div>`}
                     </div>
-                    <!-- 放在所有清單內容的最底部 -->
-<div class="h-28 w-full pointer-events-none" aria-hidden="true"></div>
-
-
                 `;
             } else if (currentTab === 'expense') {
-                let mayTotal = 0, pingTotal = 0;
+                let mayPaid = 0, pingPaid = 0;
+                let mayShouldPay = 0, pingShouldPay = 0;
+
                 expenses.forEach(e => {
-                    if (e.col1 === 'May') mayTotal += Number(e.col3);
-                    if (e.col1 === '萍') pingTotal += Number(e.col3);
+                    let amt = parseFloat(e.amount) || 0;
+                    let payer = e.payer;
+                    
+                    // 計算墊付金額
+                    if (payer === 'May') mayPaid += amt;
+                    if (payer === '萍') pingPaid += amt;
+
+                    // 🌸 讀取後端回傳的新欄位（mayShare / pingShare），若沒填則預設對半分
+                    let mayShare = (e.mayShare !== undefined && e.mayShare !== '') ? parseFloat(e.mayShare) : (amt / 2);
+                    let pingShare = (e.pingShare !== undefined && e.pingShare !== '') ? parseFloat(e.pingShare) : (amt / 2);
+
+                    mayShouldPay += mayShare;
+                    pingShouldPay += pingShare;
                 });
-                let diff = Math.abs(mayTotal - pingTotal) / 2;
+
+                let mayNet = mayPaid - mayShouldPay;
+                let pingNet = pingPaid - pingShouldPay;
+                
                 let settlementText = "✨ 兩人目前花費已完全打平！";
-                if (mayTotal > pingTotal) settlementText = `💡 萍 要給 May ￥${diff} (一人份差額)`;
-                else if (pingTotal > mayTotal) settlementText = `💡 May 要給 萍 ￥${diff} (一人份差額)`;
+                if (mayNet < 0) {
+                    settlementText = `💡 May 要給 萍 ￥${Math.abs(Math.round(mayNet))} (結算差額)`;
+                } else if (pingNet < 0) {
+                    settlementText = `💡 萍 要給 May ￥${Math.abs(Math.round(pingNet))} (結算差額)`;
+                }
 
                 content.innerHTML = `
                     <h2 class="text-lg font-bold mb-2 text-center shrink-0 ${cTextAccent}">💰 記帳本</h2>
@@ -472,23 +467,42 @@
                             </select>
                             <input type="text" id="exp-name" placeholder="消費品項/店名" class="flex-1 p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
                         </div>
-                        <input type="number" id="exp-amount" placeholder="金額 (JPY 圓)" class="w-full p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="number" id="exp-amount" placeholder="總金額 (JPY 圓)" class="w-full p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none" oninput="handleAmountInput()">
+
+                        <!-- 💡 自訂分帳開關 -->
+                        <div class="flex items-center space-x-2 pt-1">
+                            <input type="checkbox" id="customSplitToggle" onchange="toggleCustomSplit()" class="rounded border-gray-300">
+                            <label for="customSplitToggle" class="text-xs text-gray-600 cursor-pointer">自訂兩人分攤金額（不勾選則預設平分）</label>
+                        </div>
+
+                        <!-- 💡 自訂金額輸入區（預設隱藏） -->
+                        <div id="customSplitFields" class="hidden grid grid-cols-2 gap-2 pt-1">
+                            <div>
+                                <label class="text-[10px] text-gray-500">May 應付</label>
+                                <input type="number" id="exp-may-share" placeholder="May 金額" class="w-full p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-gray-500">萍 應付</label>
+                                <input type="number" id="exp-ping-share" placeholder="萍 金額" class="w-full p-2 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                            </div>
+                        </div>
+
                         <button onclick="handleExpAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">我付了錢💸</button>
                     </div>
                     <div class="space-y-2.5 mb-2">
                         <div class="${cBg} p-2.5 rounded-2xl border">
-                            <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayTotal}</span></h3>
+                            <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 May 墊付總計</span><span>￥${mayPaid}</span></h3>
                             <div class="space-y-1 text-xs">
-                                ${expenses.filter(e => e.col1 === 'May').map((e) => `
-                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.col2}</span><span>￥${e.col3} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
+                                ${expenses.filter(e => e.payer === 'May').map((e) => `
+                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
                                 `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
                         <div class="${cBg} p-2.5 rounded-2xl border">
-                            <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 萍 墊付總計</span><span>￥${pingTotal}</span></h3>
+                            <h3 class="text-xs font-bold ${cTextAccent} mb-1 flex justify-between"><span>🌸 萍 墊付總計</span><span>￥${pingPaid}</span></h3>
                             <div class="space-y-1 text-xs">
-                                ${expenses.filter(e => e.col1 === '萍').map((e) => `
-                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.col2}</span><span>￥${e.col3} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
+                                ${expenses.filter(e => e.payer === '萍').map((e) => `
+                                    <div class="flex justify-between ${cSubBg} px-2 py-1 rounded-lg border"><span>${e.name}</span><span>￥${e.amount} <button onclick="cloudDelete('expenses', ${e.row})" class="text-red-400 ml-1.5 font-bold">×</button></span></div>
                                 `).join('') || '<span class="text-xs opacity-60">尚無紀錄</span>'}
                             </div>
                         </div>
@@ -518,8 +532,18 @@
             const payer = document.getElementById('exp-payer').value;
             const name = document.getElementById('exp-name').value;
             const amount = document.getElementById('exp-amount').value;
+            
+            const isCustom = document.getElementById('customSplitToggle')?.checked;
+            let mayShare = '';
+            let pingShare = '';
+            
+            if (isCustom) {
+                mayShare = document.getElementById('exp-may-share').value;
+                pingShare = document.getElementById('exp-ping-share').value;
+            }
+
             if (!name || !amount) return alert('請完整填寫項目與金額');
-            cloudAdd('expenses', { payer, name, amount });
+            cloudAdd('expenses', { payer, name, amount, mayShare, pingShare });
         }
 
         fetchAllData();
