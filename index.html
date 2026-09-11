@@ -101,6 +101,9 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbwn7WUsn8U2j8yM8HfJqHkb5tMsMxxI1QMDV7kUM4uAoAWCJif4gQTgWuvTegoG0w5J/exec";
 
+        // 💡 抵達飯店後，直接在此修改房號字串（例如: "802"）
+        const HOTEL_ROOM = "尚未填寫";
+
         let currentTab = 'itinerary';
         let currentDay = 1;
         let currentTheme = localStorage.getItem('hakodate_theme') || 'sky';
@@ -108,7 +111,6 @@
         let restaurants = [];
         let spots = [];
         let expenses = [];
-        let hotelRoom = localStorage.getItem('hotelRoom') || '';
 
         function showLoading(show) {
             const loader = document.getElementById('loading');
@@ -216,12 +218,6 @@
 
         function switchTab(tab) { currentTab = tab; render(); window.scrollTo(0, 0); }
         function switchDay(day) { currentDay = day; render(); }
-        
-        // 修正：保存房號並即時記錄至本地儲存空間
-        function saveRoom(val) { 
-            hotelRoom = val; 
-            localStorage.setItem('hotelRoom', val); 
-        }
 
         function toggleCustomSplit() {
             const isCustom = document.getElementById('customSplitToggle').checked;
@@ -364,7 +360,7 @@
                     <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">🚆 交通與住宿完整指南</h2>
                     <div class="space-y-3 text-xs mb-20">
                         
-                        <!-- 飯店基本資訊與即時房號輸入欄位 (已修正) -->
+                        <!-- 飯店基本資訊與直接讀取 HOTEL_ROOM 常數的靜態顯示 -->
                         <div class="${cBg} backdrop-blur-md p-3.5 rounded-2xl shadow-sm border space-y-2">
                             <div class="flex items-center space-x-2">
                                 <span class="text-lg">🏨</span>
@@ -380,11 +376,7 @@
                             <div class="text-[11px] space-y-1.5 pt-1 border-t">
                                 <p>📍 <strong>地址：</strong>北海道函館市本町26-17 <a href="https://maps.google.com/?q=北海道函館市本町26-17" target="_blank" class="${cTextAccent} underline font-bold">[地圖]</a></p>
                                 <p>🚇 <strong>交通：</strong>JR函館站搭市電 15 分鐘至「五稜郭公園前」站，下車步行 1 分鐘</p>
-                                <div class="pt-1.5 border-t flex items-center space-x-2">
-                                    <span class="font-bold ${cTextAccent}">🔑 房號：</span>
-                                    <input type="text" value="${hotelRoom}" onchange="saveRoom(this.value)" placeholder="點此輸入房號" class="w-28 px-2 py-1 border rounded-lg text-xs ${cSubBg} focus:outline-none">
-                                    <span>室</span>
-                                </div>
+                                <p class="pt-1.5 border-t font-bold ${cTextAccent}">🔑 房號：${HOTEL_ROOM} 室</p>
                             </div>
                         </div>
 
@@ -436,26 +428,81 @@
                     </div>
                 `;
             } else if (currentTab === 'spots') {
-                content.innerHTML = `
-                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點清單</h2>
-                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
-                        <input type="text" id="spot-name" placeholder="輸入景點名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <input type="text" id="spot-url" placeholder="貼上 Google Map 網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
-                        <button onclick="handleSpotAdd()" class="w-full ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至景點口袋</button>
-                    </div>
-                    <div class="space-y-3 mb-20">
-                        ${spots.map((item) => `
-                            <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm flex items-center justify-between border">
-                                <div class="flex items-center space-x-2.5 min-w-0 flex-1 mr-2">
-                                    <div class="w-9 h-9 ${cSubBg} rounded-xl flex items-center justify-center text-sm shrink-0 border">📍</div>
-                                    <p class="font-bold text-xs truncate">${escapeHtml(item.col1)}</p>
-                                </div>
-                                <div class="flex items-center space-x-1 shrink-0">
-                                    ${item.col2 ? `<a href="${item.col2}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm">地圖</a>` : ''}
-                                    <button onclick="cloudDelete('spots', ${item.row})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
+                // 1. 依據「元町」與「其他」群組化
+                let groupedSpots = { '元町': [], '其他': [] };
+                spots.forEach(item => {
+                    let cat = item.category === '元町' ? '元町' : '其他';
+                    if (!groupedSpots[cat]) groupedSpots[cat] = [];
+                    groupedSpots[cat].push(item);
+                });
+
+                // 2. 建立各分類摺疊列表 HTML
+                let spotHtml = '';
+                const categories = ['元町', '其他'];
+                categories.forEach(cat => {
+                    if (groupedSpots[cat] && groupedSpots[cat].length > 0) {
+                        spotHtml += `
+                            <div class="${cBg} rounded-2xl shadow-sm border overflow-hidden mb-3">
+                                <button onclick="toggleSpotCategory('${cat}')" class="w-full p-3 flex justify-between items-center transition-colors">
+                                    <span class="font-bold text-sm ${cTextAccent}">📍 ${cat} (${groupedSpots[cat].length})</span>
+                                    <span id="icon-spot-${cat}" class="transform transition-transform text-xs opacity-60">▼</span>
+                                </button>
+                                <div id="cat-spot-${cat}" class="p-2 space-y-2 border-t ${currentTheme==='night'?'border-slate-700':(currentTheme==='paper'?'border-amber-200':'border-sky-100')}">
+                                    ${groupedSpots[cat].map(item => `
+                                        <div data-row="${item.row}" 
+                                             data-name="${escapeHtml(item.col1 || '')}" 
+                                             data-url="${escapeHtml(item.col2 || '')}" 
+                                             data-category="${escapeHtml(cat)}" 
+                                             data-notes="${escapeHtml(item.notes || '')}"
+                                             ondblclick="editSpotElement(this)" 
+                                             class="${cSubBg} p-3 rounded-xl flex flex-col border cursor-pointer hover:brightness-95 transition-all">
+                                            <div class="flex justify-between items-start">
+                                                <div class="flex flex-col flex-1 mr-2 min-w-0">
+                                                    <p class="font-bold text-xs truncate">${escapeHtml(item.col1)}</p>
+                                                    ${item.notes ? `<p class="text-[10px] mt-1 opacity-75 truncate">${escapeHtml(item.notes)}</p>` : ''}
+                                                </div>
+                                                <div class="flex items-center space-x-1 shrink-0">
+                                                    ${item.col2 ? `<a href="${item.col2}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-lg shadow-sm" onclick="event.stopPropagation()">地圖</a>` : ''}
+                                                    <button onclick="event.stopPropagation(); cloudDelete('spots', ${item.row})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1.5 py-1">刪除</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
                                 </div>
                             </div>
-                        `).join('') || `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點與地圖吧！</div>`}
+                        `;
+                    }
+                });
+
+                if (spotHtml === '') {
+                    spotHtml = `<div class="text-center text-xs mt-12 ${cBg} p-6 rounded-3xl border border-dashed">✨ 快加入你想去的私房景點與地圖吧！</div>`;
+                }
+
+                // 3. 渲染景點輸入與列表區域
+                content.innerHTML = `
+                    <h2 class="text-lg font-bold mb-3 text-center shrink-0 ${cTextAccent}">⭐ 景點清單 ⭐</h2>
+                    <div class="${cBg} backdrop-blur-md p-3 rounded-2xl shadow-sm mb-3 border space-y-2 shrink-0">
+                        <input type="hidden" id="spot-edit-row" value="">
+                        <input type="text" id="spot-name" placeholder="輸入景點名稱" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        <input type="text" id="spot-url" placeholder="貼上 Google Map 網址" class="w-full p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        
+                        <div class="flex space-x-2">
+                            <select id="spot-category" class="p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none w-1/3">
+                                <option value="元町">元町</option>
+                                <option value="其他">其他</option>
+                            </select>
+                            <input type="text" id="spot-notes" placeholder="備註 (例如: 最佳攝影點)" class="w-2/3 p-2.5 border rounded-xl text-xs ${cSubBg} focus:outline-none">
+                        </div>
+
+                        <div class="flex space-x-2">
+                            <button id="spot-submit-btn" onclick="handleSpotAdd()" class="flex-1 ${cPrimaryBtn} py-2 rounded-xl text-xs font-bold shadow-sm">✨ 新增至景點口袋</button>
+                            <button id="spot-cancel-btn" onclick="cancelSpotEdit()" class="hidden w-1/4 bg-slate-400 hover:bg-slate-500 text-white py-2 rounded-xl text-xs font-bold shadow-sm">取消</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-20">
+                        <p class="text-[10px] text-center opacity-60 mb-2">💡 雙擊下方項目即可進行編輯</p>
+                        ${spotHtml}
                     </div>
                 `;
             } else if (currentTab === 'restaurant') {
@@ -642,13 +689,72 @@
             }
         }
 
+        // --- 景點管理邏輯 (新增/編輯/切換) ---
         function handleSpotAdd() {
+            const editRow = document.getElementById('spot-edit-row')?.value;
             const name = document.getElementById('spot-name').value.trim();
             const url = document.getElementById('spot-url').value.trim();
+            const category = document.getElementById('spot-category')?.value || '其他';
+            const notes = document.getElementById('spot-notes')?.value.trim() || '';
+
             if (!name) return alert('請輸入景點名稱');
-            cloudAdd('spots', { name, url, category: '', notes: '' });
+
+            if (editRow) {
+                cloudUpdate('spots', editRow, { name, url, category, notes });
+                cancelSpotEdit();
+            } else {
+                cloudAdd('spots', { name, url, category, notes });
+                document.getElementById('spot-name').value = '';
+                document.getElementById('spot-url').value = '';
+                document.getElementById('spot-notes').value = '';
+            }
         }
 
+        function editSpotElement(el) {
+            const row = el.dataset.row;
+            const name = el.dataset.name;
+            const url = el.dataset.url;
+            const category = el.dataset.category;
+            const notes = el.dataset.notes;
+
+            document.getElementById('spot-edit-row').value = row;
+            document.getElementById('spot-name').value = name;
+            document.getElementById('spot-url').value = url;
+            document.getElementById('spot-category').value = category || '其他';
+            document.getElementById('spot-notes').value = notes || '';
+            
+            const submitBtn = document.getElementById('spot-submit-btn');
+            submitBtn.innerText = '💾 儲存修改';
+            
+            document.getElementById('spot-cancel-btn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelSpotEdit() {
+            document.getElementById('spot-edit-row').value = '';
+            document.getElementById('spot-name').value = '';
+            document.getElementById('spot-url').value = '';
+            document.getElementById('spot-category').value = '元町';
+            document.getElementById('spot-notes').value = '';
+            
+            const submitBtn = document.getElementById('spot-submit-btn');
+            submitBtn.innerText = '✨ 新增至景點口袋';
+            document.getElementById('spot-cancel-btn').classList.add('hidden');
+        }
+
+        function toggleSpotCategory(cat) {
+            const el = document.getElementById('cat-spot-' + cat);
+            const icon = document.getElementById('icon-spot-' + cat);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                icon.innerText = '▼';
+            } else {
+                el.classList.add('hidden');
+                icon.innerText = '◀';
+            }
+        }
+
+        // --- 美食管理邏輯 (新增/編輯/切換) ---
         function handleRestoAdd() {
             const editRow = document.getElementById('resto-edit-row')?.value;
             const name = document.getElementById('resto-name').value.trim();
@@ -669,7 +775,6 @@
             }
         }
 
-        // 修正：透過 DOM element dataset 取值，避免字串引號導致語法解析崩潰
         function editRestoElement(el) {
             const row = el.dataset.row;
             const name = el.dataset.name;
@@ -714,6 +819,7 @@
             }
         }
 
+        // --- 記帳邏輯 ---
         function handleExpAdd() {
             const payer = document.getElementById('exp-payer').value;
             const name = document.getElementById('exp-name').value.trim();
@@ -735,7 +841,6 @@
             document.getElementById('exp-amount').value = '';
         }
 
-        // 輔助函式：防止 XSS 與屬性引號中斷
         function escapeHtml(str) {
             if (str === null || str === undefined) return '';
             return String(str)
